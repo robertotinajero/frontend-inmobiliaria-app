@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Fondo y superposición */
+.login-background {
+  @apply relative min-h-screen bg-cover bg-center flex items-center justify-center;
+  background-image: url('/assets/img/build2.jpg'); /* actualiza el path si es necesario */
+}
+
+.login-overlay {
+  @apply absolute inset-0 bg-black bg-opacity-40;
+}
+
+.login-container {
+  @apply relative z-10 flex items-center justify-center min-h-screen px-4;
+}
+
+/* Botón */
+.login-button {
+  @apply w-full bg-okip-505 hover:bg-okip-605 text-white font-semibold py-2 px-4 rounded-lg flex items-center justify-center gap-2 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.login-button-icon {
+  @apply w-5 h-5;
+}
+
+.login-loading {
+  @apply flex items-center gap-2;
+}
+
+.login-spinner {
+  @apply animate-spin h-5 w-5 text-white;
+}
+
+.label-white {
+  @apply text-white font-medium;
+  color: white !important;
+}
