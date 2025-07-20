@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 import { IoEye, IoEyeOff } from 'react-icons/io5';
 import { PiSignInBold } from 'react-icons/pi';
@@ -16,7 +17,7 @@ import '../assets/css/login.css';
 const Login = () => {
   const API_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
-  //const { login } = useAuth()
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -61,33 +62,37 @@ const Login = () => {
   };
 
   const sendSignin = async () => {
-    if (!validateForm()) return;
-
     const body = { email, password };
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:3000/auth/login', {
-        email,
-        password,
-      });    
+      const response = await axios.post(`${API_URL}//auth/login`, body);
+      console.log('response:', response);
+      const { userLogin, token } = response.data;
 
-      //const data = await response.json();
-     
-      if (!response.ok) {
-        //setSnackBarOpen(true);
-        //setToastMessage(data.msg);
-        //setToastSeverity('error');
-        setLoading(false);
+      // Guardar token en localStorage
+      localStorage.setItem('token', token);
+
+      // Actualizar contexto de autenticación si usas uno
+      login(userLogin, token); // asegúrate que `login` lo actualice
+
+      // Si el login es exitoso (status 200), navega
+      if (response.status === 200 || response.status === 201) {
+        // login(response.data.user, response.data.access_token);
+        console.log('login');
+        
         navigate('/dashboard');
-        return;
       }
-      //login(data.userLogin, data.token); // <<--- Aquí actualizas el contexto
-      navigate('/dashboard');
     } catch (error) {
-      console.error('Fetch error:', error);
-      alert('Ocurrió un error inesperado. Intenta más tarde.');
+      setToastMessage('Credenciales incorrectas');
+      setToastSeverity('error');
+      setSnackBarOpen(true);
+      setLoading(false);
+      console.error('Error en login:', error);
+    } finally {
+      setLoading(false);
     }
   };
+
 
   // const handleLogin = async (e) => {
   //   e.preventDefault();
@@ -139,26 +144,26 @@ const Login = () => {
               </div>
 
               <div className="relative mb-4">
-                  <Label htmlFor="password" className="text-okip-600 text-sm font-medium">Contraseña</Label>
-                  <Input
-                    id="password"
-                    type={showPassword ? 'text' : 'password'}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    autoComplete="current-password"
-                    className="w-full mt-1 px-4 py-2 rounded-lg border border-okip-200 bg-white/50 focus:outline-none focus:ring-2 focus:ring-okip-500"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute mt-3 right-3 top-1/2 transform -translate-y-1/2 text-gray-600"
-                  >
-                    {showPassword ? <IoEyeOff size={20} /> : <IoEye size={20} />}
-                  </button>
-                </div>
+                <Label htmlFor="password" className="text-okip-600 text-sm font-medium">Contraseña</Label>
+                <Input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  autoComplete="current-password"
+                  className="w-full mt-1 px-4 py-2 rounded-lg border border-okip-200 bg-white/50 focus:outline-none focus:ring-2 focus:ring-okip-500"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute mt-3 right-3 top-1/2 transform -translate-y-1/2 text-gray-600"
+                >
+                  {showPassword ? <IoEyeOff size={20} /> : <IoEye size={20} />}
+                </button>
+              </div>
 
-              
+
 
               <div className="flex justify-end text-sm text-okip-400 mb-6">
                 <a href="#" className="hover:underline">¿Olvidaste tu contraseña?</a>
@@ -168,37 +173,37 @@ const Login = () => {
                 type="submit"
                 disabled={loading}
                 className="login-button"
-                //className="w-full bg-okip-500 hover:bg-okip-505 text-white font-semibold py-2 rounded-full transition duration-300"
+              //className="w-full bg-okip-500 hover:bg-okip-505 text-white font-semibold py-2 rounded-full transition duration-300"
               >
                 {loading ? (
-                    <span className="login-loading">
-                      <svg
-                        className="login-spinner"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        />
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4z"
-                        />
-                      </svg>
-                      Ingresando...
-                    </span>
-                  ) : (
-                    <>
-                      Ingresar <PiSignInBold className="login-button-icon" />
-                    </>
-                  )}
+                  <span className="login-loading">
+                    <svg
+                      className="login-spinner"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4z"
+                      />
+                    </svg>
+                    Ingresando...
+                  </span>
+                ) : (
+                  <>
+                    Ingresar <PiSignInBold className="login-button-icon" />
+                  </>
+                )}
               </Button>
             </form>
 
