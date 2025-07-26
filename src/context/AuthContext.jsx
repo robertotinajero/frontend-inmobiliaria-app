@@ -7,7 +7,7 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [logoutCallback, setLogoutCallback] = useState(null);
 
-  const login = (newToken) => {
+  const login = (newToken) => {  
     localStorage.setItem('token', newToken);
     setToken(newToken);
   };
