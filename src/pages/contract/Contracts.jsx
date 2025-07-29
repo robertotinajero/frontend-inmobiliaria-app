@@ -1,5 +1,7 @@
+// src/pages/Contracts.jsx
 import { useEffect, useState } from "react";
 import ContractModal from "./ContractModal";
+import apiFetch from "../../utils/apiFetch";
 
 export default function Contracts() {
   const [contracts, setContracts] = useState([]);
@@ -8,55 +10,94 @@ export default function Contracts() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  // Estado del modal
+  // Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedContract, setSelectedContract] = useState(null);
 
-  useEffect(() => {
-    setLoading(true);
-    // Simulación de datos
-    setTimeout(() => {
-      const dummyContracts = [
-        { id: 1, number: "C-001", client: "Juan Pérez", property: "Casa Centro", startDate: "2025-07-01", status: "Activo" },
-        { id: 2, number: "C-002", client: "María López", property: "Depto Norte", startDate: "2025-06-20", status: "Vencido" },
-        { id: 3, number: "C-003", client: "Carlos Ruiz", property: "Local Sur", startDate: "2025-05-15", status: "Activo" },
-      ];
-      setContracts(dummyContracts);
-      setTotalPages(3);
+  /**
+   * Cargar contratos desde el backend
+   */
+  const fetchContracts = async () => {
+    try {
+      setLoading(true);
+      // GET con búsqueda y paginación (backend ya lo soporta)
+      const data = await apiFetch(
+        `/contracts?page=${page}&limit=5&search=${encodeURIComponent(search)}`
+      );
+
+      // Si el backend devuelve paginación
+      if (data.items) {
+        setContracts(data.items);
+        setTotalPages(data.totalPages);
+      } else {
+        // Si devuelve un array sin paginación
+        setContracts(data);
+        setTotalPages(1);
+      }
+    } catch (error) {
+      console.error("Error cargando contratos:", error);
+    } finally {
       setLoading(false);
-    }, 500);
+    }
+  };
+
+  useEffect(() => {
+    fetchContracts();
   }, [page, search]);
 
+  /**
+   * Nuevo contrato
+   */
   const handleCreate = () => {
     setSelectedContract(null);
     setIsModalOpen(true);
   };
 
+  /**
+   * Editar contrato
+   */
   const handleEdit = (contract) => {
     setSelectedContract(contract);
     setIsModalOpen(true);
   };
 
-  const handleDelete = (id) => {
-    if (confirm("¿Seguro que quieres eliminar este contrato?")) {
-      setContracts((prev) => prev.filter((c) => c.id !== id));
+  /**
+   * Guardar contrato (crear o editar)
+   */
+  const handleSave = async (newContract) => {
+    try {
+      if (selectedContract) {
+        // PUT
+        await apiFetch(`/contracts/${selectedContract.id_contract}`, {
+          method: "PUT",
+          body: JSON.stringify(newContract),
+        });
+      } else {
+        // POST
+        await apiFetch("/contracts", {
+          method: "POST",
+          body: JSON.stringify(newContract),
+        });
+      }
+      setIsModalOpen(false);
+      fetchContracts();
+    } catch (error) {
+      console.error("Error guardando contrato:", error);
     }
   };
 
-  const handleSave = (newContract) => {
-    if (selectedContract) {
-      // Editar
-      setContracts((prev) =>
-        prev.map((c) => (c.id === selectedContract.id ? { ...c, ...newContract } : c))
-      );
-    } else {
-      // Crear
-      setContracts((prev) => [
-        ...prev,
-        { id: prev.length + 1, ...newContract },
-      ]);
+  /**
+   * Eliminar contrato (borrado lógico)
+   */
+  const handleDelete = async (id) => {
+    if (confirm("¿Seguro que quieres eliminar este contrato?")) {
+      try {
+        await apiFetch(`/contracts/${id}`, { method: "DELETE" });
+        fetchContracts();
+      } catch (error) {
+        console.error("Error eliminando contrato:", error);
+      }
     }
-    setIsModalOpen(false);
   };
 
   return (
@@ -76,7 +117,7 @@ export default function Contracts() {
       <div className="mb-4">
         <input
           type="text"
-          placeholder="Buscar por cliente o número..."
+          placeholder="Buscar contrato, arrendador o arrendatario..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="border border-gray-300 rounded-lg px-4 py-2 w-full sm:w-1/2"
@@ -88,10 +129,11 @@ export default function Contracts() {
         <table className="w-full text-sm text-left text-gray-700">
           <thead className="bg-gray-100 text-gray-800 text-sm uppercase">
             <tr>
-              <th className="px-4 py-3">N° Contrato</th>
-              <th className="px-4 py-3">Cliente</th>
+              <th className="px-4 py-3">Folio</th>
               <th className="px-4 py-3">Propiedad</th>
-              <th className="px-4 py-3">Fecha Inicio</th>
+              <th className="px-4 py-3">Arrendador</th>
+              <th className="px-4 py-3">Arrendatario</th>
+              <th className="px-4 py-3">Fecha inicio</th>
               <th className="px-4 py-3">Estado</th>
               <th className="px-4 py-3 text-right">Acciones</th>
             </tr>
@@ -99,34 +141,25 @@ export default function Contracts() {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="6" className="text-center py-6 text-gray-500">
+                <td colSpan="7" className="text-center py-6 text-gray-500">
                   Cargando contratos...
                 </td>
               </tr>
             ) : contracts.length === 0 ? (
               <tr>
-                <td colSpan="6" className="text-center py-6 text-gray-500">
+                <td colSpan="7" className="text-center py-6 text-gray-500">
                   No se encontraron contratos
                 </td>
               </tr>
             ) : (
               contracts.map((contract) => (
-                <tr key={contract.id} className="border-b hover:bg-gray-50">
-                  <td className="px-4 py-3">{contract.number}</td>
-                  <td className="px-4 py-3">{contract.client}</td>
-                  <td className="px-4 py-3">{contract.property}</td>
-                  <td className="px-4 py-3">{contract.startDate}</td>
-                  <td className="px-4 py-3">
-                    <span
-                      className={`px-2 py-1 rounded text-xs font-semibold ${
-                        contract.status === "Activo"
-                          ? "bg-green-100 text-green-600"
-                          : "bg-red-100 text-red-600"
-                      }`}
-                    >
-                      {contract.status}
-                    </span>
-                  </td>
+                <tr key={contract.id_contract} className="border-b hover:bg-gray-50">
+                  <td className="px-4 py-3">{contract.folio}</td>
+                  <td className="px-4 py-3">{contract.property_name}</td>
+                  <td className="px-4 py-3">{contract.landlord_name}</td>
+                  <td className="px-4 py-3">{contract.tenant_name}</td>
+                  <td className="px-4 py-3">{contract.dt_start}</td>
+                  <td className="px-4 py-3">{contract.status}</td>
                   <td className="px-4 py-3 text-right space-x-2">
                     <button
                       onClick={() => handleEdit(contract)}
@@ -135,7 +168,7 @@ export default function Contracts() {
                       Editar
                     </button>
                     <button
-                      onClick={() => handleDelete(contract.id)}
+                      onClick={() => handleDelete(contract.id_contract)}
                       className="text-red-600 hover:underline text-sm"
                     >
                       Eliminar

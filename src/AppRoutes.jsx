@@ -1,43 +1,78 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
-import Home from './pages/Home';
-import Contract from './pages/contract/Contracts';
-import PrivateRoute from './auth/PrivateRoute';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Login from "./pages/Login";
+import Layout from "./pages/Layout";
+import Dashboard from "./pages/Dashboard";
+import Contracts from "./pages/contract/Contracts";
+import Properties from "./pages/property/Properties";
+import Tenants from "./pages/tenant/Tenants";
+import Landlords from "./pages/landlord/Landlords";
+import PrivateRoute from "./auth/PrivateRoute";
 
-const AppRoutes = () => {
+export default function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Redirección por defecto */}
+        {/* Ruta raíz */}
         <Route path="/" element={<Navigate to="/login" replace />} />
 
-        {/* Redirección por defecto */}
-        <Route path="*" element={<Navigate to="/login" />} />
-
-        {/* Ruta pública */}
+        {/* Pública */}
         <Route path="/login" element={<Login />} />
 
-        {/* Ruta protegida */}
-        <Route path="/home" element={
-          // <PrivateRoute allowedRoles={['admin', 'editor']}>
-          <Dashboard />
-          // {/* </PrivateRoute> */}
-        }
-        >
-          <Route index element={<Home />} />
-          {/* /dashboard */}
-          {/* Ejemplo de más subrutas */}
-          <Route path="contratos" element={<Contract />} />
-          {/* <Route path="usuarios" element={<Usuarios />} /> */}
-        </Route>
+        {/* Privadas con layout independiente */}
+        <Route
+          path="/dashboard"
+          element={
+            <PrivateRoute>
+              <Layout>
+                <Dashboard />
+              </Layout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/contracts"
+          element={
+            <PrivateRoute>
+              <Layout>
+                <Contracts />
+              </Layout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/properties"
+          element={
+            <PrivateRoute>
+              <Layout>
+                <Properties />
+              </Layout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/tenants"
+          element={
+            <PrivateRoute>
+              <Layout>
+                <Tenants />
+              </Layout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/landlords"
+          element={
+            <PrivateRoute>
+              <Layout>
+                <Landlords />
+              </Layout>
+            </PrivateRoute>
+          }
+        />
 
-
-        {/* Ruta no encontrada */}
-        {/* <Route path="*" element={<NotFound />} /> */}
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
-    </BrowserRouter >
+    </BrowserRouter>
   );
-};
-
-export default AppRoutes;
+}

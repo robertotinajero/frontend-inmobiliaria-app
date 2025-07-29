@@ -67,20 +67,19 @@ const Login = () => {
     setLoading(true);
     try {
       const response = await axios.post(`${API_URL}/api/auth/login`, body);
-  
-      const { userLogin, access_token } = response.data;  
+      console.log(response);
+      
+      const { access_token } = response.data;  
 
       // Guardar token en localStorage
-      //localStorage.setItem('token', access_token);
+      localStorage.setItem('token', access_token);
 
       // Actualizar contexto de autenticación si usas uno
       login(access_token); // asegúrate que `login` lo actualice
 
       // Si el login es exitoso (status 200), navega
       if (response.status === 200 || response.status === 201) {
-        //login(response.data.user, response.data.access_token);
-
-        navigate('/home');
+        navigate('/dashboard');
       }
     } catch (error) {
       setToastMessage('Credenciales incorrectas');
