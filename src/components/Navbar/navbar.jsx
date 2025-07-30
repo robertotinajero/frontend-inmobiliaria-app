@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { FaBell, FaUserCircle, FaBars } from "react-icons/fa";
+import { useAuth } from '../../context/AuthContext';
+import "./navbar.css";
 
 export default function Navbar({ onToggleSidebar, onLogout, user }) {
+  const { logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
 
@@ -12,15 +15,14 @@ export default function Navbar({ onToggleSidebar, onLogout, user }) {
   ];
 
   return (
-    <div className="h-16 bg-white shadow-md fixed w-full top-0 z-10 pl-64 pr-4 flex items-center justify-between">
+    <div className="navbar">
       <div className="flex items-center gap-4">
         <button
           onClick={onToggleSidebar}
-          className="text-gray-600 hover:text-gray-800 lg:hidden"
+          className="text-gray-600 hover:text-gray-800 "
         >
-          <FaBars size={20} />
+          <FaBars size={22} className="text-gray-700" />
         </button>
-        <h1 className="text-lg font-bold text-gray-700">Inmobiliaria</h1>
       </div>
 
       <div className="flex items-center gap-6 relative">
@@ -71,7 +73,7 @@ export default function Navbar({ onToggleSidebar, onLogout, user }) {
             ) : (
               <FaUserCircle size={28} />
             )}
-            <span className="hidden md:block">{user?.name || "Usuario"}</span>
+            <span className=" md:block">{user || "Usuario"}</span>
           </button>
           {menuOpen && (
             <div className="absolute right-0 mt-2 w-48 bg-white shadow-md rounded-lg py-2 z-20">
@@ -83,7 +85,7 @@ export default function Navbar({ onToggleSidebar, onLogout, user }) {
               </button>
               <hr className="my-1" />
               <button
-                onClick={onLogout}
+                onClick={logout}
                 className="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100"
               >
                 Cerrar sesión

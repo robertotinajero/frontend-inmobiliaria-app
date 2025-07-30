@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from 'react';
-import { jwtDecode } from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode'; // ✅ Importación correcta
 
 const AuthContext = createContext();
 
@@ -7,7 +7,7 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [logoutCallback, setLogoutCallback] = useState(null);
 
-  const login = (newToken) => {  
+  const login = (newToken) => {
     localStorage.setItem('token', newToken);
     setToken(newToken);
   };
@@ -15,7 +15,6 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem('token');
     setToken(null);
-    localStorage.clear();
     if (logoutCallback) logoutCallback();
     else window.location.href = '/login';
   };
@@ -47,12 +46,12 @@ export const AuthProvider = ({ children }) => {
   const isAuthenticated = !!token;
 
   return (
-    <AuthContext.Provider value={{ token, login, logout, isAuthenticated, setLogoutHandler, getDecodedToken }}>
+    <AuthContext.Provider
+      value={{ token, login, logout, isAuthenticated, setLogoutHandler, getDecodedToken }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
 
-export const useAuth = () => {
-  return useContext(AuthContext);
-};
+export const useAuth = () => useContext(AuthContext);

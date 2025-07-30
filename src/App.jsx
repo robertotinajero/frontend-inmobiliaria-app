@@ -1,24 +1,39 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Login from "./pages/Login";
+import Layout from "./components/Layout/Layout";
+import Dashboard from "./pages/Dashboard";
+import Contracts from "./pages/contract/Contracts";
+import Properties from "./pages/property/Properties";
+import Tenants from "./pages/tenant/Tenants";
+import Landlords from "./pages/landlord/Landlords";
+import Users from "./pages/Users/Users";
+import PrivateRoute from "./auth/PrivateRoute";
 
 export default function App() {
   return (
-    <>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Navigate to="/login" replace />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/login" element={<Login />} />
-          
-          {/* <Route path="/home/*" element={<Home />}/> */}
-          
-          {/* <Route path="/config/*" element={<Config />}/> */}
+    <BrowserRouter>
+      <Routes>
+        {/* Ruta raíz */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
 
-          {/* Redirección fallback para rutas no reconocidas */}
-          <Route path="*" element={<Navigate to="/login" replace />} />
-        </Routes>
-      </BrowserRouter>
-    </>
-  )
-};
+        {/* Pública */}
+        <Route path="/login" element={<Login />} />
+
+        {/* Rutas privadas con Layout */}
+        <Route element={<PrivateRoute />}>
+          <Route element={<Layout />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/contracts" element={<Contracts />} />
+            <Route path="/properties" element={<Properties />} />
+            <Route path="/tenants" element={<Tenants />} />
+            <Route path="/landlords" element={<Landlords />} />
+            <Route path="/users" element={<Users />} />
+          </Route>
+        </Route>
+
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/login" />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
