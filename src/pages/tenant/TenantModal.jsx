@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 export default function TenantModal({ onClose, onSave, tenant }) {
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
+  const [curp, setCurp] = useState("");
+  const [rfc, setRfc] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
 
@@ -11,6 +13,8 @@ export default function TenantModal({ onClose, onSave, tenant }) {
     if (tenant) {
       setFirstname(tenant.firstname);
       setLastname(tenant.lastname);
+      setCurp(tenant.curp || "");
+      setRfc(tenant.rfc || "");
       setPhone(tenant.phone || "");
       setEmail(tenant.email || "");
     }
@@ -18,7 +22,7 @@ export default function TenantModal({ onClose, onSave, tenant }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave({ firstname, lastname, phone, email });
+    onSave({ firstname, lastname, curp, rfc,  phone, email });
   };
 
   return (
@@ -27,7 +31,7 @@ export default function TenantModal({ onClose, onSave, tenant }) {
         <h2 className="text-lg font-semibold mb-4">
           {tenant ? "Editar inquilino" : "Nuevo inquilino"}
         </h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
           <input
             type="text"
             placeholder="Nombre"
@@ -43,6 +47,20 @@ export default function TenantModal({ onClose, onSave, tenant }) {
             onChange={(e) => setLastname(e.target.value)}
             className="w-full border border-gray-300 rounded px-3 py-2"
             required
+          />
+           <input
+            type="text"
+            placeholder="CURP"
+            value={curp}
+            onChange={(e) => setCurp(e.target.value)}
+            className="w-full border border-gray-300 rounded px-3 py-2"
+          />
+           <input
+            type="text"
+            placeholder="RFC"
+            value={rfc}
+            onChange={(e) => setRfc(e.target.value)}
+            className="w-full border border-gray-300 rounded px-3 py-2"
           />
           <input
             type="text"

@@ -1,97 +1,152 @@
-// src/components/properties/PropertyModal.jsx
+// src/components/property/PropertyModal.jsx
 import { useState, useEffect } from "react";
+import apiFetch from "../../utils/apiFetch";
 
-export default function PropertyModal({ onClose, onSave, property }) {
-  const [nmProperty, setNmProperty] = useState("");
-  const [type, setType] = useState("Casa");
-  const [address, setAddress] = useState("");
-  const [description, setDescription] = useState("");
-  const [size, setSize] = useState("");
-  const [phone, setPhone] = useState("");
-  const [status, setStatus] = useState("Disponible");
+export default function PropertyModal({ property, onClose, onSaved }) {
+  const [form, setForm] = useState({
+    nm_property: "",
+    type: "",
+    street: "",
+    colony: "",
+    postal_code: "",
+    municipality: "",
+    state: "",
+    depto: "",
+    description: "",
+    size: "",
+    rooms: "",
+    status: "Disponible",
+  });
 
   useEffect(() => {
-    if (property) {
-      setNmProperty(property.nm_property);
-      setType(property.type);
-      setAddress(property.address);
-      setDescription(property.description || "");
-      setSize(property.size || "");
-      setPhone(property.phone || "");
-      setStatus(property.status);
-    }
+    if (property) setForm(property);
   }, [property]);
 
-  const handleSubmit = (e) => {
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSave({
-      nm_property: nmProperty,
-      type,
-      address,
-      description,
-      size,
-      phone,
-      status,
-    });
+    if (property) {
+      await apiFetch(`/api/properties/${property.id_property}`, {
+        method: "PUT",
+        body: JSON.stringify(form),
+      });
+    } else {
+      await apiFetch("/api/properties/", {
+        method: "POST",
+        body: JSON.stringify(form),
+      });
+    }
+    onSaved();
+    onClose();
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-lg p-6">
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg shadow-lg w-full max-w-3xl p-6">
         <h2 className="text-lg font-semibold mb-4">
-          {property ? "Editar propiedad" : "Nueva propiedad"}
+          {property ? "Editar Propiedad" : "Nueva Propiedad"}
         </h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
           <input
-            type="text"
+            name="nm_property"
+            value={form.nm_property}
+            onChange={handleChange}
             placeholder="Nombre"
-            value={nmProperty}
-            onChange={(e) => setNmProperty(e.target.value)}
-            className="w-full border border-gray-300 rounded px-3 py-2"
+            className="border p-2 rounded"
             required
           />
           <select
-            value={type}
-            onChange={(e) => setType(e.target.value)}
-            className="w-full border border-gray-300 rounded px-3 py-2"
+            name="type"
+            value={form.type}
+            onChange={handleChange}
+            className="border p-2 rounded"
             required
           >
-            <option value="Casa">Casa</option>
+            <option value="">Tipo</option>
             <option value="Departamento">Departamento</option>
             <option value="Bodega">Bodega</option>
+            <option value="Casa">Casa</option>
           </select>
+
           <input
-            type="text"
-            placeholder="Dirección"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            className="w-full border border-gray-300 rounded px-3 py-2"
+            name="street"
+            value={form.street}
+            onChange={handleChange}
+            placeholder="Calle"
+            className="border p-2 rounded"
             required
           />
+          <input
+            name="colony"
+            value={form.colony}
+            onChange={handleChange}
+            placeholder="Colonia"
+            className="border p-2 rounded"
+            required
+          />
+          <input
+            name="postal_code"
+            value={form.postal_code}
+            onChange={handleChange}
+            placeholder="Código postal"
+            className="border p-2 rounded"
+            required
+          />
+          <input
+            name="municipality"
+            value={form.municipality}
+            onChange={handleChange}
+            placeholder="Municipio"
+            className="border p-2 rounded"
+            required
+          />
+          <input
+            name="state"
+            value={form.state}
+            onChange={handleChange}
+            placeholder="Estado"
+            className="border p-2 rounded"
+            required
+          />
+          <input
+            name="depto"
+            value={form.depto}
+            onChange={handleChange}
+            placeholder="Departamento"
+            className="border p-2 rounded"
+            required
+          />
+
           <textarea
+            name="description"
+            value={form.description}
+            onChange={handleChange}
             placeholder="Descripción"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className="w-full border border-gray-300 rounded px-3 py-2"
+            className="border p-2 rounded col-span-2"
           />
           <input
+            name="size"
+            value={form.size}
+            onChange={handleChange}
+            placeholder="Tamaño (m2)"
             type="number"
-            placeholder="Tamaño (m²)"
-            value={size}
-            onChange={(e) => setSize(e.target.value)}
-            className="w-full border border-gray-300 rounded px-3 py-2"
+            className="border p-2 rounded"
           />
           <input
-            type="text"
-            placeholder="Teléfono"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            className="w-full border border-gray-300 rounded px-3 py-2"
+            name="rooms"
+            value={form.rooms}
+            onChange={handleChange}
+            placeholder="Cuartos"
+            className="border p-2 rounded"
           />
+
           <select
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-            className="w-full border border-gray-300 rounded px-3 py-2"
+            name="status"
+            value={form.status}
+            onChange={handleChange}
+            className="border p-2 rounded"
           >
             <option value="Disponible">Disponible</option>
             <option value="Ocupado">Ocupado</option>
@@ -99,7 +154,7 @@ export default function PropertyModal({ onClose, onSave, property }) {
           </select>
 
           {/* Botones */}
-          <div className="flex justify-end gap-2">
+          <div className="col-span-2 flex justify-end gap-2">
             <button
               type="button"
               onClick={onClose}

@@ -1,8 +1,27 @@
 // src/components/contracts/ContractModal.jsx
 import { useState, useEffect } from "react";
 import apiFetch from "../../utils/apiFetch";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+    Box,
+    Modal,
+    InputLabel,
+    Select,
+    MenuItem,
+    Tabs,
+    Tab,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableRow,
+    TextField,
+    TablePagination,
+    Snackbar,
+    Alert
+} from "@mui/material";
 
-export default function ContractModal({ onClose, onSave, contract }) {
+export default function ContractModal({ title, onClose, onSave, contract }) {
   // Campos de contrato
   const [folio, setFolio] = useState("");
   const [dtStart, setDtStart] = useState("");
@@ -33,9 +52,9 @@ export default function ContractModal({ onClose, onSave, contract }) {
     const fetchData = async () => {
       try {
         const [landlordsData, tenantsData, propertiesData] = await Promise.all([
-          apiFetch("/landlords"),
-          apiFetch("/tenants"),
-          apiFetch("/properties"),
+          apiFetch("/api/landlords/"),
+          apiFetch("/api/tenants/"),
+          apiFetch("/api/properties/"),
         ]);
 
         setLandlords(landlordsData);
@@ -92,177 +111,211 @@ export default function ContractModal({ onClose, onSave, contract }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl p-6">
-        <h2 className="text-lg font-semibold mb-4">
-          {contract ? "Editar contrato" : "Nuevo contrato"}
-        </h2>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="text"
-            placeholder="Folio"
-            value={folio}
-            onChange={(e) => setFolio(e.target.value)}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-            required
-          />
-
-          {/* Select de Propiedad */}
-          <select
-            value={idProperty}
-            onChange={(e) => setIdProperty(e.target.value)}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-            required
+    <AnimatePresence>
+      <motion.div
+        className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+      >
+        {/* Card del modal */}
+        <motion.div
+          className="bg-white rounded-lg shadow-xl w-full max-w-3xl p-6 relative"
+          initial={{ opacity: 0, scale: 0.9, y: -20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.9, y: -20 }}
+          transition={{ duration: 0.2 }}
+        >
+          {/* Botón cerrar */}
+          <button
+            onClick={onClose}
+            className="absolute top-3 right-3 text-gray-500 hover:text-gray-800 text-xl"
           >
-            <option value="">Selecciona la propiedad</option>
-            {properties.map((p) => (
-              <option key={p.id_property} value={p.id_property}>
-                {p.nm_property} - {p.address}
-              </option>
-            ))}
-          </select>
+            ✕
+          </button>
 
-          {/* Select de Landlord */}
-          <select
-            value={idLandlord}
-            onChange={(e) => setIdLandlord(e.target.value)}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-            required
-          >
-            <option value="">Selecciona el arrendador</option>
-            {landlords.map((l) => (
-              <option key={l.id_landlord} value={l.id_landlord}>
-                {l.firstname} {l.lastname}
-              </option>
-            ))}
-          </select>
+          {/* Título */}
+          {title && (
+            <h2 className="text-lg font-semibold mb-4 text-gray-800">
+              {title}
+            </h2>
+          )}
 
-          {/* Select de Tenant */}
-          <select
-            value={idTenant}
-            onChange={(e) => setIdTenant(e.target.value)}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-            required
-          >
-            <option value="">Selecciona el arrendatario</option>
-            {tenants.map((t) => (
-              <option key={t.id_tenant} value={t.id_tenant}>
-                {t.firstname} {t.lastname}
-              </option>
-            ))}
-          </select>
+          <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
+            <div className='flex flex-col gap-4 text-sm'>
+                    <h3 className='text-black'>Nueva Tecnología</h3>
+                    <TextField
+                        label='Nombre de la Tecnología'
+                        variant='outlined'
+                        fullWidth
+                        value={folio}
+                        onChange={(e) => setFolio(e.target.value)}
+                    />
+                </div>
+            {/* Folio */}
+            <input
+              type="text"
+              placeholder="Folio"
+              value={folio}
+              onChange={(e) => setFolio(e.target.value)}
+              className="border border-gray-300 rounded px-3 py-2"
+              required
+            />
 
-          {/* Fechas */}
-          <div className="flex gap-2">
+            {/* Día de pago */}
+            <input
+              type="number"
+              placeholder="Día de pago (1-31)"
+              value={paymentDay}
+              onChange={(e) => setPaymentDay(e.target.value)}
+              className="border border-gray-300 rounded px-3 py-2"
+              required
+            />
+
+            {/* Select Propiedad */}
+            <select
+              value={idProperty}
+              onChange={(e) => setIdProperty(e.target.value)}
+              className="border border-gray-300 rounded px-3 py-2"
+              required
+            >
+              <option value="">Selecciona la propiedad</option>
+              {properties.map((p) => (
+                <option key={p.id_property} value={p.id_property}>
+                  {p.nm_property} - {p.address}
+                </option>
+              ))}
+            </select>
+
+            {/* Select Landlord */}
+            <select
+              value={idLandlord}
+              onChange={(e) => setIdLandlord(e.target.value)}
+              className="border border-gray-300 rounded px-3 py-2"
+              required
+            >
+              <option value="">Selecciona el arrendador</option>
+              {landlords.map((l) => (
+                <option key={l.id_landlord} value={l.id_landlord}>
+                  {l.firstname} {l.lastname}
+                </option>
+              ))}
+            </select>
+
+            {/* Select Tenant */}
+            <select
+              value={idTenant}
+              onChange={(e) => setIdTenant(e.target.value)}
+              className="border border-gray-300 rounded px-3 py-2 col-span-2"
+              required
+            >
+              <option value="">Selecciona el arrendatario</option>
+              {tenants.map((t) => (
+                <option key={t.id_tenant} value={t.id_tenant}>
+                  {t.firstname} {t.lastname}
+                </option>
+              ))}
+            </select>
+
+            {/* Fechas */}
             <input
               type="date"
               value={dtStart}
               onChange={(e) => setDtStart(e.target.value)}
-              className="w-1/2 border border-gray-300 rounded px-3 py-2"
+              className="border border-gray-300 rounded px-3 py-2"
               required
             />
             <input
               type="date"
               value={dtEnd}
               onChange={(e) => setDtEnd(e.target.value)}
-              className="w-1/2 border border-gray-300 rounded px-3 py-2"
+              className="border border-gray-300 rounded px-3 py-2"
             />
-          </div>
 
-          {/* Renta y Depósito */}
-          <div className="flex gap-2">
+            {/* Renta mensual */}
             <input
               type="number"
               placeholder="Renta mensual"
               value={monthlyRent}
               onChange={(e) => setMonthlyRent(e.target.value)}
-              className="w-1/2 border border-gray-300 rounded px-3 py-2"
+              className="border border-gray-300 rounded px-3 py-2"
               required
             />
+
+            {/* Depósito */}
             <input
               type="number"
               placeholder="Depósito en garantía"
               value={securityDeposit}
               onChange={(e) => setSecurityDeposit(e.target.value)}
-              className="w-1/2 border border-gray-300 rounded px-3 py-2"
+              className="border border-gray-300 rounded px-3 py-2"
               required
             />
-          </div>
 
-          {/* Día de pago */}
-          <input
-            type="number"
-            placeholder="Día de pago (1-31)"
-            value={paymentDay}
-            onChange={(e) => setPaymentDay(e.target.value)}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-            required
-          />
+            {/* Penalización */}
+            <input
+              type="number"
+              placeholder="Penalización"
+              value={penalty}
+              onChange={(e) => setPenalty(e.target.value)}
+              className="border border-gray-300 rounded px-3 py-2"
+            />
 
-          {/* Penalización */}
-          <input
-            type="number"
-            placeholder="Penalización"
-            value={penalty}
-            onChange={(e) => setPenalty(e.target.value)}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-          />
-
-          {/* Aval */}
-          <input
-            type="text"
-            placeholder="Nombre del aval"
-            value={guarantorName}
-            onChange={(e) => setGuarantorName(e.target.value)}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-          />
-          <input
-            type="text"
-            placeholder="Contacto del aval"
-            value={guarantorContact}
-            onChange={(e) => setGuarantorContact(e.target.value)}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-          />
-
-          {/* Estado */}
-          <select
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-          >
-            <option value="Activo">Activo</option>
-            <option value="Vencido">Vencido</option>
-            <option value="Finalizado">Finalizado</option>
-            <option value="Cancelado">Cancelado</option>
-          </select>
-
-          {/* Notas */}
-          <textarea
-            placeholder="Notas"
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-          />
-
-          {/* Botones */}
-          <div className="flex justify-end gap-2 mt-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+            {/* Estado */}
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              className="border border-gray-300 rounded px-3 py-2"
             >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-            >
-              Guardar
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+              <option value="Activo">Activo</option>
+              <option value="Vencido">Vencido</option>
+              <option value="Finalizado">Finalizado</option>
+              <option value="Cancelado">Cancelado</option>
+            </select>
+
+            {/* Aval */}
+            <input
+              type="text"
+              placeholder="Nombre del aval"
+              value={guarantorName}
+              onChange={(e) => setGuarantorName(e.target.value)}
+              className="border border-gray-300 rounded px-3 py-2"
+            />
+            <input
+              type="text"
+              placeholder="Contacto del aval"
+              value={guarantorContact}
+              onChange={(e) => setGuarantorContact(e.target.value)}
+              className="border border-gray-300 rounded px-3 py-2"
+            />
+
+            {/* Notas */}
+            <textarea
+              placeholder="Notas"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              className="border border-gray-300 rounded px-3 py-2 col-span-2"
+            />
+
+            {/* Botones */}
+            <div className="flex justify-end gap-2 col-span-2">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              >
+                Guardar
+              </button>
+            </div>
+          </form>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
   );
 }

@@ -15,7 +15,7 @@ export default function Landlords() {
   const fetchLandlords = async () => {
     try {
       setLoading(true);
-      const data = await apiFetch(`/api/landlords`);
+      const data = await apiFetch(`/api/landlords/`);
       setLandlords(
         data.filter((l) =>
           `${l.firstname} ${l.lastname}`
@@ -37,7 +37,7 @@ export default function Landlords() {
   const handleDelete = async (id) => {
     if (confirm("¿Seguro que quieres eliminar este arrendador?")) {
       try {
-        await apiFetch(`/landlords/${id}`, { method: "DELETE" });
+        await apiFetch(`/api/landlords/${id}`, { method: "DELETE" });
         fetchLandlords();
       } catch (error) {
         console.error("Error eliminando arrendador:", error);
@@ -49,13 +49,13 @@ export default function Landlords() {
     try {
       if (selectedLandlord) {
         // Actualizar
-        await apiFetch(`/landlords/${selectedLandlord.id_landlord}`, {
+        await apiFetch(`/api/landlords/${selectedLandlord.id_landlord}`, {
           method: "PUT",
           body: JSON.stringify(landlordData),
         });
       } else {
         // Crear
-        await apiFetch(`/landlords`, {
+        await apiFetch(`/api/landlords/`, {
           method: "POST",
           body: JSON.stringify(landlordData),
         });

@@ -15,7 +15,7 @@ export default function Tenants() {
   const fetchTenants = async () => {
     try {
       setLoading(true);
-      const data = await apiFetch(`/tenants`);
+      const data = await apiFetch(`/api/tenants/`);
       setTenants(
         data.filter((t) =>
           `${t.firstname} ${t.lastname}`
@@ -37,7 +37,7 @@ export default function Tenants() {
   const handleDelete = async (id) => {
     if (confirm("¿Seguro que quieres eliminar este inquilino?")) {
       try {
-        await apiFetch(`/tenants/${id}`, { method: "DELETE" });
+        await apiFetch(`/api/tenants/${id}`, { method: "DELETE" });
         fetchTenants();
       } catch (error) {
         console.error("Error eliminando inquilino:", error);
@@ -49,13 +49,13 @@ export default function Tenants() {
     try {
       if (selectedTenant) {
         // Actualizar
-        await apiFetch(`/tenants/${selectedTenant.id_tenant}`, {
+        await apiFetch(`/api/tenants/${selectedTenant.id_tenant}`, {
           method: "PUT",
           body: JSON.stringify(tenantData),
         });
       } else {
         // Crear
-        await apiFetch(`/tenants`, {
+        await apiFetch(`/api/tenants`, {
           method: "POST",
           body: JSON.stringify(tenantData),
         });
@@ -100,6 +100,8 @@ export default function Tenants() {
           <thead className="bg-gray-100 text-gray-800 text-sm uppercase">
             <tr>
               <th className="px-4 py-3">Nombre</th>
+              <th className="px-4 py-3">CURP</th>
+              <th className="px-4 py-3">RFC</th>
               <th className="px-4 py-3">Teléfono</th>
               <th className="px-4 py-3">Email</th>
               <th className="px-4 py-3 text-right">Acciones</th>
@@ -124,6 +126,8 @@ export default function Tenants() {
                   <td className="px-4 py-3">
                     {t.firstname} {t.lastname}
                   </td>
+                  <td className="px-4 py-3">{t.curp || "-"}</td>
+                  <td className="px-4 py-3">{t.rfc || "-"}</td>
                   <td className="px-4 py-3">{t.phone || "-"}</td>
                   <td className="px-4 py-3">{t.email || "-"}</td>
                   <td className="px-4 py-3 text-right space-x-2">

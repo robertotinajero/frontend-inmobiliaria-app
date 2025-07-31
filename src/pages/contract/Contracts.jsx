@@ -1,6 +1,7 @@
 // src/pages/Contracts.jsx
 import { useEffect, useState } from "react";
 import ContractModal from "./ContractModal";
+import Modal from "../../components/Modal/modal";
 import apiFetch from "../../utils/apiFetch";
 
 export default function Contracts() {
@@ -11,6 +12,7 @@ export default function Contracts() {
   const [totalPages, setTotalPages] = useState(1);
 
   // Modal
+  const [open, setOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedContract, setSelectedContract] = useState(null);
 
@@ -21,9 +23,7 @@ export default function Contracts() {
     try {
       setLoading(true);
       // GET con búsqueda y paginación (backend ya lo soporta)
-      const data = await apiFetch(
-        `/contracts?page=${page}&limit=5&search=${encodeURIComponent(search)}`
-      );
+      const data = await apiFetch('/api/contracts/');
 
       // Si el backend devuelve paginación
       if (data.items) {
@@ -68,13 +68,13 @@ export default function Contracts() {
     try {
       if (selectedContract) {
         // PUT
-        await apiFetch(`/contracts/${selectedContract.id_contract}`, {
+        await apiFetch(`/api/contracts/${selectedContract.id_contract}`, {
           method: "PUT",
           body: JSON.stringify(newContract),
         });
       } else {
         // POST
-        await apiFetch("/contracts", {
+        await apiFetch("/api/contracts/", {
           method: "POST",
           body: JSON.stringify(newContract),
         });
@@ -92,7 +92,7 @@ export default function Contracts() {
   const handleDelete = async (id) => {
     if (confirm("¿Seguro que quieres eliminar este contrato?")) {
       try {
-        await apiFetch(`/contracts/${id}`, { method: "DELETE" });
+        await apiFetch(`/api/contracts/${id}`, { method: "DELETE" });
         fetchContracts();
       } catch (error) {
         console.error("Error eliminando contrato:", error);
@@ -134,6 +134,7 @@ export default function Contracts() {
               <th className="px-4 py-3">Arrendador</th>
               <th className="px-4 py-3">Arrendatario</th>
               <th className="px-4 py-3">Fecha inicio</th>
+              <th className="px-4 py-3">Fecha de termino</th>
               <th className="px-4 py-3">Estado</th>
               <th className="px-4 py-3 text-right">Acciones</th>
             </tr>
@@ -159,6 +160,7 @@ export default function Contracts() {
                   <td className="px-4 py-3">{contract.landlord_name}</td>
                   <td className="px-4 py-3">{contract.tenant_name}</td>
                   <td className="px-4 py-3">{contract.dt_start}</td>
+                  <td className="px-4 py-3">{contract.dt_end}</td>
                   <td className="px-4 py-3">{contract.status}</td>
                   <td className="px-4 py-3 text-right space-x-2">
                     <button
@@ -202,12 +204,14 @@ export default function Contracts() {
         </button>
       </div>
 
-      {/* Modal */}
+      {/* Modal */}  
       {isModalOpen && (
         <ContractModal
+          title="Nuevo contrato"
           onClose={() => setIsModalOpen(false)}
           onSave={handleSave}
           contract={selectedContract}
+          show={open}
         />
       )}
     </div>
