@@ -38,8 +38,8 @@ export default function Layout() {
       <div className={`flex-1 transition-all ${collapsed ? "ml-16" : "ml-64"}`}>
         <Navbar
           user={user}
-          onToggleSidebar={() => setCollapsed(!collapsed)}
           onLogout={handleLogout}
+          onToggleSidebar={() => setCollapsed(!collapsed)}
         />
         <main className="pt-16 p-4 bg-gray-100 min-h-screen">
           <Outlet context={{ user, setUser }} />

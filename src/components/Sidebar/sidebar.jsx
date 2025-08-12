@@ -4,8 +4,7 @@ import { NavLink } from "react-router-dom";
 import { FaHome, FaFileContract, FaBuilding, FaUsers } from "react-icons/fa";
 import "../../assets/css/Sidebar.css";
 
-export default function Sidebar({ showSideBar, setShowSideBar }) {
-  const [collapsed, setCollapsed] = useState(false);
+export default function Sidebar({ collapsed }) {
   return (
     <>
       {/* Sidebar contenedor */}
@@ -21,12 +20,6 @@ export default function Sidebar({ showSideBar, setShowSideBar }) {
             alt="Grupo Peña"
             className="h-16 object-contain"
           />
-          <button
-            onClick={() => setCollapsed(!collapsed)}
-            className="text-white hover:text-gray-300"
-          >
-            {collapsed ? "›" : "‹"}
-          </button>
         </div>
 
         {/* Menú */}
@@ -51,7 +44,8 @@ export default function Sidebar({ showSideBar, setShowSideBar }) {
               }`
             }
           >
-            <FaFileContract /> Contratos
+            <FaFileContract size={18} />
+            {!collapsed && <span>Contratos</span>}
           </NavLink>
 
           <NavLink
@@ -103,13 +97,7 @@ export default function Sidebar({ showSideBar, setShowSideBar }) {
         </nav>
       </div>
 
-      {/* Overlay (para cerrar el sidebar en móvil) */}
-      {showSideBar && (
-        <div
-          className="fixed inset-0 bg-black/40 lg:hidden z-40"
-          onClick={() => setShowSideBar(false)}
-        ></div>
-      )}
+      
     </>
   );
 }
