@@ -1,7 +1,6 @@
 // src/pages/Contracts.jsx
 import { useEffect, useState } from "react";
 import ContractModal from "./ContractModal";
-import Modal from "../../components/Modal/modal";
 import apiFetch from "../../utils/apiFetch";
 
 export default function Contracts() {
