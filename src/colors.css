@@ -1,0 +1,14 @@
+:root {
+    --body_primary_background : #f2f2f7;
+    --body_secondary_background : #212529;
+    --body_tertiary_background : #ffffff;
+    --text_primary_color : rgb(108, 117, 125);
+    --screen_overlay_color :rgb(127, 127, 127, 0.5);
+}
+[data-theme="dark"] {
+    --body_primary_background : #2d333c;
+    --body_secondary_background : #313a46;
+    --body_tertiary_background : #2f3742;
+    --text_primary_color : rgb(170, 184, 197);
+    --screen_overlay_color :rgb(146, 150, 155, 0.5);
+}

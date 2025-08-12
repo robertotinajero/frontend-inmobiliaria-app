@@ -13,6 +13,7 @@ import { Label } from '@/components/Label/label';
 import { motion } from 'framer-motion';
 import { ShieldCheck } from 'lucide-react';
 import '../assets/css/login.css';
+import logo from '../assets/img/logo/logo1.png';
 
 const Login = () => {
   const API_URL = import.meta.env.VITE_API_URL;
@@ -65,21 +66,18 @@ const Login = () => {
     const body = { email, password };
     setLoading(true);
     try {
-      const response = await axios.post(`${API_URL}//auth/login`, body);
-      console.log('response:', response);
-      const { userLogin, token } = response.data;
+      const response = await axios.post(`${API_URL}/api/auth/login`, body);
+      
+      const { access_token } = response.data;  
 
       // Guardar token en localStorage
-      localStorage.setItem('token', token);
+      localStorage.setItem('token', access_token);
 
       // Actualizar contexto de autenticación si usas uno
-      login(userLogin, token); // asegúrate que `login` lo actualice
+      login(access_token); // asegúrate que `login` lo actualice
 
       // Si el login es exitoso (status 200), navega
       if (response.status === 200 || response.status === 201) {
-        // login(response.data.user, response.data.access_token);
-        console.log('login');
-        
         navigate('/dashboard');
       }
     } catch (error) {
@@ -125,6 +123,11 @@ const Login = () => {
         >
           {/* Card de login */}
           <Card className="relative z-10 bg-white/30 backdrop-blur-lg p-8 rounded-3xl shadow-xl w-[350px]">
+
+            {/* Logo de la empresa */}
+            <div className="flex justify-center mb-4">
+              <img src={logo} alt="Logo empresa" className="h-16 object-contain" />
+            </div>
 
             <h2 className="text-okip-500 text-2xl font-bold text-center mb-6">Login</h2>
 

@@ -1,0 +1,19 @@
+.navbar{
+    background-color:var(--body_tertiary_background);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    height:70px;
+    padding:0 10px;
+    box-shadow: 0 1px 3px  rgba(27, 23, 30, 0.1);
+    position:sticky;
+    top:0;
+    left:0;
+    right:0;
+}
+
+.bars {
+    color:var(--text_primary_color);
+    font-size:24px;
+    cursor:pointer;
+}

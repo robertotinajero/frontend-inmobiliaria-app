@@ -1,5 +1,5 @@
 // src/pages/Home.jsx
-export default function Dashboard() {
+export default function Home() {
   return (
     <div className="space-y-6">
       {/* Título */}

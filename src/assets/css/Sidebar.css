@@ -1,0 +1,8 @@
+.sidebar-logo {
+  background-image: url('/src/assets/img/logo/logo_2.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  height: 60px;  /* ajusta según tamaño */
+  width: 100%;
+}
