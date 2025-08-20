@@ -29,7 +29,7 @@ export default function Navbar({ user, onToggleSidebar, onLogout }) {
   }, []);
 
   return (
-    <nav className="bg-navbar-black text-white border-b px-6 py-3 flex justify-between items-center shadow-sm">
+    <nav className="bg-navbar-blue text-white border-b px-6 py-3 flex justify-between items-center shadow-sm">
       {/* Izquierda: Menú y título */}
       <div className="flex items-center gap-4">
         <button
