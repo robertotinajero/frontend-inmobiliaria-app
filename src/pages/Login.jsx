@@ -67,6 +67,7 @@ const Login = () => {
     setLoading(true);
     try {
       const response = await axios.post(`${API_URL}/api/auth/login`, body);
+      console.log(response);
       
       const { access_token } = response.data;  
 

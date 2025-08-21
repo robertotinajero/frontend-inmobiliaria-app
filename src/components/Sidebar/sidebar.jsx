@@ -16,7 +16,7 @@ export default function Sidebar({ collapsed }) {
         {/* Logo */}
         <div className="flex items-center justify-between p-4">
           <img
-            src="/src/assets/img/logo/logo2.png"
+            src="/img/logo/logo2.png"
             alt="Grupo Peña"
             className="h-16 object-contain"
           />

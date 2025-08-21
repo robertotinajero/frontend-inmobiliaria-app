@@ -5,7 +5,7 @@
 /* Fondo y superposición */
 .login-background {
   @apply relative min-h-screen bg-cover bg-center flex items-center justify-center;
-  background-image: url('@/assets/img/build2.jpg'); /* actualiza el path si es necesario */
+  background-image: url('/assets/img/build2.jpg');
 }
 
 .login-overlay {
