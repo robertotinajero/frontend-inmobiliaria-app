@@ -22,7 +22,7 @@ export default function UserModal({ user, onClose, onSaved }) {
 
     // cargar roles y departamentos
     apiFetch("/api/roles").then(setRoles).catch(console.error);
-    apiFetch("/departments").then(setDepartments).catch(console.error);
+    apiFetch("/api/departments").then(setDepartments).catch(console.error);
   }, [user]);
 
   const handleChange = (e) =>
