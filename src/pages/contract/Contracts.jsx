@@ -4,7 +4,7 @@ import ContractModal from "./ContractModal";
 import Modal from "../../components/Modal/modal";
 import apiFetch from "../../utils/apiFetch";
 import { buildContractPdf } from "../../utils/contractPdf";
-import { buildContractPdfReact } from "./buildContractPdfReact";
+//import { buildContractPdfReact } from "./buildContractPdfReact";
 
 export default function Contracts() {
   const [contracts, setContracts] = useState([]);

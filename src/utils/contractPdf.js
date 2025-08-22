@@ -137,7 +137,7 @@ addLine([
     { text: tenantName, bold: true },
     { text: ' A QUIEN SE LE DENOMINARÁ EN LO SUCESIVO "EL ARRENDATARIO", CON RELACIÓN AL INMUEBLE UBICADO EN ' },
     { text: streetNum, bold: true },
-    { text: `, ${city}, ${stateAbbr},` },
+    { text: `, ${city}, ${stateAbbr},` }
   ],
 
   // Línea 3 (si quieres continuar en la siguiente línea)
