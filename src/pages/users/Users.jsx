@@ -28,7 +28,7 @@ export default function Users() {
   const handleDelete = async (id_user) => {
     if (confirm("¿Seguro que deseas eliminar este usuario?")) {
       try {
-        await apiFetch(`/users/${id_user}`, { method: "DELETE" });
+        await apiFetch(`/api/users/${id_user}`, { method: "DELETE" });
         fetchUsers();
       } catch (error) {
         console.error("Error al eliminar usuario:", error);
