@@ -21,8 +21,8 @@ export default function UserModal({ user, onClose, onSaved }) {
     if (user) setForm({ ...form, ...user, password: "" });
 
     // cargar roles y departamentos
-    apiFetch("/roles").then(setRoles).catch(console.error);
-    apiFetch("/departments").then(setDepartments).catch(console.error);
+    apiFetch("/api/roles").then(setRoles).catch(console.error);
+    apiFetch("/api/departments").then(setDepartments).catch(console.error);
   }, [user]);
 
   const handleChange = (e) =>
@@ -32,12 +32,12 @@ export default function UserModal({ user, onClose, onSaved }) {
     e.preventDefault();
     try {
       if (user) {
-        await apiFetch(`/users/${user.id_user}`, {
+        await apiFetch(`/api/users/${user.id_user}`, {
           method: "PUT",
           body: JSON.stringify(form),
         });
       } else {
-        await apiFetch("/users", {
+        await apiFetch("/api/users", {
           method: "POST",
           body: JSON.stringify(form),
         });

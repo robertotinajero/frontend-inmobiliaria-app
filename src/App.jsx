@@ -11,6 +11,7 @@ import Properties from "./pages/property/Properties";
 import Tenants from "./pages/tenant/Tenants";
 import Landlords from "./pages/landlord/Landlords";
 import Users from "./pages/users/Users";
+import AccountPage from "./pages/account/AccountPage"
 
 export default function App() {
   return (
@@ -28,6 +29,7 @@ export default function App() {
           <Route path="/tenants" element={<Tenants />} />
           <Route path="/landlords" element={<Landlords />} />
           <Route path="/users" element={<Users />} />
+          <Route path="/account" element={<AccountPage />} />
         </Route>
       </Route>
 

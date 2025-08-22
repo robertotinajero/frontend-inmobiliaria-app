@@ -9,7 +9,7 @@ export default function Sidebar({ collapsed }) {
     <>
       {/* Sidebar contenedor */}
       <div
-        className={`h-screen bg-[#0B1D51] text-white fixed top-0 left-0 transition-all duration-300 ${
+        className={`h-screen bg-navbar-blue text-white fixed top-0 left-0 transition-all duration-300 ${
           collapsed ? "w-16" : "w-64"
         }`}
       >

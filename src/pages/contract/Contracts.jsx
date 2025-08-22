@@ -2,6 +2,8 @@
 import { useEffect, useState } from "react";
 import ContractModal from "./ContractModal";
 import apiFetch from "../../utils/apiFetch";
+import { buildContractPdf } from "../../utils/contractPdf";
+//import { buildContractPdfReact } from "./buildContractPdfReact";
 
 export default function Contracts() {
   const [contracts, setContracts] = useState([]);
@@ -63,27 +65,96 @@ export default function Contracts() {
   /**
    * Guardar contrato (crear o editar)
    */
-  const handleSave = async (newContract) => {
-    try {
-      if (selectedContract) {
-        // PUT
-        await apiFetch(`/api/contracts/${selectedContract.id_contract}`, {
-          method: "PUT",
-          body: JSON.stringify(newContract),
-        });
-      } else {
-        // POST
-        await apiFetch("/api/contracts/", {
-          method: "POST",
-          body: JSON.stringify(newContract),
-        });
-      }
-      setIsModalOpen(false);
-      fetchContracts();
-    } catch (error) {
-      console.error("Error guardando contrato:", error);
-    }
-  };
+const handleSave = async (payloadFromModal) => {
+  try {
+    // Normaliza tipos
+    const contractPayload = {
+      folio: payloadFromModal.folio,
+      dt_start: payloadFromModal.dt_start,
+      dt_end: payloadFromModal.dt_end || null,
+      monthly_rent: Number(payloadFromModal.monthly_rent),
+      security_deposit: Number(payloadFromModal.security_deposit),
+      payment_day: Number(payloadFromModal.payment_day),
+      penalty: payloadFromModal.penalty ? Number(payloadFromModal.penalty) : null,
+      status: payloadFromModal.status,
+      id_landlord: Number(payloadFromModal.id_landlord),
+      id_tenant: Number(payloadFromModal.id_tenant),
+      id_property: Number(payloadFromModal.id_property),
+      guarantor_name: payloadFromModal.guarantor_name || null,
+      guarantor_contact: payloadFromModal.guarantor_contact || null,
+      notes: payloadFromModal.notes || null,
+    };
+
+    const isEdit = Boolean(selectedContract?.id_contract);
+    const url = isEdit
+      ? `/api/contracts/${selectedContract.id_contract}`
+      : `/api/contracts/`;
+    const method = isEdit ? "PUT" : "POST";
+
+    // 1) Guardar contrato
+    const saved = await apiFetch(url, {
+      method,
+      body: JSON.stringify(contractPayload),
+    });
+
+    const id_contract = saved?.id_contract ?? selectedContract?.id_contract;
+    if (!id_contract) throw new Error("No se obtuvo id_contract del backend.");
+
+    // 2) Cargar entidades para el PDF
+    //    (Ajusta endpoints si tu API es distinta)
+    const [landlord, tenant, property] = await Promise.all([
+      apiFetch(`/api/landlords/${contractPayload.id_landlord}`),
+      apiFetch(`/api/tenants/${contractPayload.id_tenant}`),
+      apiFetch(`/api/properties/${contractPayload.id_property}`),
+    ]);
+
+    // 3) Generar PDF
+    const pdfBlob = await buildContractPdfReact({ contract: contractPayload, landlord, tenant, property });
+
+
+    // 4) Descargar localmente
+    const filename = `Contrato_${saved?.folio || contractPayload.folio || id_contract}.pdf`;
+    const blobUrl = URL.createObjectURL(pdfBlob);
+    const a = document.createElement("a");
+    a.href = blobUrl;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(blobUrl);
+
+    // 5) (Opcional) Subir el PDF al backend como archivo del contrato
+    // const fdPdf = new FormData();
+    // fdPdf.append("file", pdfBlob, filename);
+    // await apiFetch(`/api/contracts/${id_contract}/upload`, { method: "POST", body: fdPdf });
+
+    // 6) (Opcional) Subir archivos adicionales que vinieron del modal
+    // if (payloadFromModal.files?.length) {
+    //   const fdFiles = new FormData();
+    //   payloadFromModal.files.forEach((f) => fdFiles.append("files", f));
+    //   await apiFetch(`/api/contracts/${id_contract}/files`, { method: "POST", body: fdFiles });
+    // }
+
+    // 7) (Opcional) Generar pagarés aquí después de guardar (si quieres)
+    // const notes = generatePromissoryNotes(
+    //   contractPayload.dt_start,
+    //   contractPayload.dt_end,
+    //   contractPayload.payment_day,
+    //   contractPayload.monthly_rent
+    // ).map(n => ({ ...n, id_contract, currency: "MXN", status: "Pendiente" }));
+    // if (notes.length) {
+    //   await apiFetch(`/api/promissory-notes/bulk`, {
+    //     method: "POST",
+    //     headers: { "Content-Type": "application/json" },
+    //     body: JSON.stringify({ id_contract, notes }),
+    //   });
+    // }
+
+    setIsModalOpen(false);
+    fetchContracts();
+  } catch (error) {
+    console.error("Error guardando contrato:", error);
+    alert("Error al guardar contrato / generar PDF");
+  }
+};
 
   /**
    * Eliminar contrato (borrado lógico)

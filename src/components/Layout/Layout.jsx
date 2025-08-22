@@ -18,6 +18,7 @@ export default function Layout() {
         const decoded = jwtDecode(token);
         setUser(decoded);
       } catch (error) {
+        console.log(error)
         handleLogout();
       }
     }
@@ -41,7 +42,7 @@ export default function Layout() {
           onToggleSidebar={() => setCollapsed(!collapsed)}
         />
         <main className="pt-16 p-4 bg-gray-100 min-h-screen">
-          <Outlet />
+          <Outlet context={{ user, setUser }} />
         </main>
       </div>
     </div>
