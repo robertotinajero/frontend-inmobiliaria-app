@@ -7,13 +7,18 @@ export default function Properties() {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
-  const [editingProperty, setEditingProperty] = useState(null);
+  const [selectedProperty, setSelectedProperty] = useState(null);
 
   const fetchProperties = async () => {
-    setLoading(true);
-    const data = await apiFetch("/api/properties/");
-    setProperties(data);
-    setLoading(false);
+    try {
+      setLoading(true);
+      const data = await apiFetch("/api/properties/");
+      setProperties(data);
+    } catch (error) {
+      console.error("Error al cargar las propiedades:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -22,19 +27,20 @@ export default function Properties() {
 
   return (
     <div>
-      <div className="flex justify-between mb-6">
-        <h1 className="text-xl font-bold">Propiedades</h1>
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold text-gray-800">Propiedades</h1>
         <button
           onClick={() => {
-            setEditingProperty(null);
+            setSelectedProperty(null);
             setModalOpen(true);
           }}
           className="bg-blue-600 text-white px-4 py-2 rounded"
         >
-          + Nueva
+          + Nueva propiedad
         </button>
       </div>
 
+      {/* Tabla */}
       <div className="bg-white shadow rounded-lg overflow-x-auto">
         <table className="w-full text-left">
           <thead className="bg-gray-100">
@@ -50,8 +56,14 @@ export default function Properties() {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={5} className="text-center p-4">
-                  Cargando...
+                <td colSpan="6" className="text-center py-6 text-gray-500">
+                  Cargando propiedades...
+                </td>
+              </tr>
+            ) : properties.length === 0 ? (
+              <tr>
+                <td colSpan="6" className="text-center py-6 text-gray-500">
+                  No se encontraron propiedades
                 </td>
               </tr>
             ) : (
@@ -69,7 +81,7 @@ export default function Properties() {
                   <td className="p-2 text-right">
                     <button
                       onClick={() => {
-                        setEditingProperty(p);
+                        setSelectedProperty(p);
                         setModalOpen(true);
                       }}
                       className="text-blue-600 mr-2"
@@ -86,7 +98,7 @@ export default function Properties() {
 
       {modalOpen && (
         <PropertyModal
-          property={editingProperty}
+          property={selectedProperty}
           onClose={() => setModalOpen(false)}
           onSaved={fetchProperties}
         />
