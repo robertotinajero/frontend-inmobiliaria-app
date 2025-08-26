@@ -25,6 +25,17 @@ export default function Properties() {
     fetchProperties();
   }, []);
 
+  const handleDelete = async (id) => {
+      if (confirm("¿Seguro que quieres eliminar este arrendador?")) {
+        try {
+          await apiFetch(`/api/properties/${id}`, { method: "DELETE" });
+          fetchProperties();
+        } catch (error) {
+          console.error("Error eliminando arrendador:", error);
+        }
+      }
+    };
+
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
@@ -87,6 +98,12 @@ export default function Properties() {
                       className="text-blue-600 mr-2"
                     >
                       Editar
+                    </button>
+                    <button
+                      className="text-red-600 hover:underline text-sm"
+                      onClick={() => handleDelete(p.id_property)}
+                    >
+                      Eliminar
                     </button>
                   </td>
                 </tr>
