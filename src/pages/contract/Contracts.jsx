@@ -97,29 +97,29 @@ const handleSave = async (payloadFromModal) => {
       body: JSON.stringify(contractPayload),
     });
 
-    const id_contract = saved?.id_contract ?? selectedContract?.id_contract;
-    if (!id_contract) throw new Error("No se obtuvo id_contract del backend.");
+    // const id_contract = saved?.id_contract ?? selectedContract?.id_contract;
+    // if (!id_contract) throw new Error("No se obtuvo id_contract del backend.");
 
-    // 2) Cargar entidades para el PDF
-    //    (Ajusta endpoints si tu API es distinta)
-    const [landlord, tenant, property] = await Promise.all([
-      apiFetch(`/api/landlords/${contractPayload.id_landlord}`),
-      apiFetch(`/api/tenants/${contractPayload.id_tenant}`),
-      apiFetch(`/api/properties/${contractPayload.id_property}`),
-    ]);
+    // // 2) Cargar entidades para el PDF
+    // //    (Ajusta endpoints si tu API es distinta)
+    // const [landlord, tenant, property] = await Promise.all([
+    //   apiFetch(`/api/landlords/${contractPayload.id_landlord}`),
+    //   apiFetch(`/api/tenants/${contractPayload.id_tenant}`),
+    //   apiFetch(`/api/properties/${contractPayload.id_property}`),
+    // ]);
 
-    // 3) Generar PDF
-    const pdfBlob = await buildContractPdfReact({ contract: contractPayload, landlord, tenant, property });
+    // // 3) Generar PDF
+    // const pdfBlob = await buildContractPdfReact({ contract: contractPayload, landlord, tenant, property });
 
 
-    // 4) Descargar localmente
-    const filename = `Contrato_${saved?.folio || contractPayload.folio || id_contract}.pdf`;
-    const blobUrl = URL.createObjectURL(pdfBlob);
-    const a = document.createElement("a");
-    a.href = blobUrl;
-    a.download = filename;
-    a.click();
-    URL.revokeObjectURL(blobUrl);
+    // // 4) Descargar localmente
+    // const filename = `Contrato_${saved?.folio || contractPayload.folio || id_contract}.pdf`;
+    // const blobUrl = URL.createObjectURL(pdfBlob);
+    // const a = document.createElement("a");
+    // a.href = blobUrl;
+    // a.download = filename;
+    // a.click();
+    // URL.revokeObjectURL(blobUrl);
 
     // 5) (Opcional) Subir el PDF al backend como archivo del contrato
     // const fdPdf = new FormData();
