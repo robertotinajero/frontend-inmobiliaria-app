@@ -48,4 +48,22 @@ export function DateLong(input = new Date(), tz = "America/Mexico_City") {
   return `${day} DE ${MESES_MX[monthIndex]} DEL ${year}`;
 }
 
+export function toDateInput (v) {
+  if (!v) return "";
+  if (typeof v === "string") {
+    // si ya viene yyyy-mm-dd, úsalo tal cual
+    if (/^\d{4}-\d{2}-\d{2}$/.test(v)) return v;
+    // si viene ISO (yyyy-mm-ddTHH:mm:ssZ), toma solo la fecha
+    const m = v.match(/^\d{4}-\d{2}-\d{2}/);
+    if (m) return m[0];
+  }
+  // Date u otro
+  const d = new Date(v);
+  if (Number.isNaN(d)) return "";
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+};
+
 

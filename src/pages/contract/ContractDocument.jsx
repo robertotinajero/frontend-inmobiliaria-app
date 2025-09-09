@@ -301,16 +301,18 @@ export default function ContractDocument({ contract, landlord, tenant, property 
           EN CUANTO AL USO DEL INMUEBLE: “LAS PARTES” CONVIENEN QUE “EL INMUEBLE” SE USARÁ PARA LOS FINES QUE TIENE ENCOMENDADOS “LA ARRENDATARIA” ASÍ COMO DE SUS USUARIOS,
           QUE ES EXCLUSIVAMENTE USO( HABITACIONAL.). ( COMERCIAL)
         </Text>
-
-        <Text style={styles.listend}>
-          a)	TRASPASO O SUBARRIENDO:, “LA ARRENDATARIA” NO PODRÁ SUBARRENDAR LA TOTALIDAD O PARTE DE “EL INMUEBLE”, NI TRASPASAR O GRAVAR EN FORMA ALGUNA SUS DERECHOS Y
-          OBLIGACIONES DERIVADAS DEL PRESENTE CONTRATO, A MENOS QUE OBTENGA EL CONSENTIMIENTO EXPRESO Y POR ESCRITO DE “EL ARRENDADOR”. “EL ARRENDADOR” EN CUALQUIER
-          MOMENTO PODRÁ TRASPASAR, PASAR, CEDER, AFECTAR, APORTAR, TRANSMITIR O DE CUALQUIER FORMA ENAJENAR LOS DERECHOS DERIVADOS DEL PRESENTE CONTRATO Y LOS DERECHOS DE
-          COBRO DE LOS MISMOS, INCLUYENDO SUS ACCESORIOS TALES COMO HIPOTECA, FIANZA, PRENDA O CUALQUIER Página 5 de 9 OTRO PRIVILEGIO CON EL QUE, EN SU CASO, SE CUENTE,
-          YA SEA DE MANERA PARCIAL O TOTAL, ASÍ COMO ENAJENAR, HIPOTECAR, AFECTAR, APORTAR, TRANSMITIR O GRAVAR DE CUALQUIER FORMA “EL INMUEBLE”. LO ANTERIOR, SIEMPRE Y
-          CUANDO NO AFECTE LOS DERECHOS DE “LA ARRENDATARIA” AL AMPARO DEL PRESENTE CONTRATO Y DE CONFORMIDAD CON LA LEGISLACIÓN APLICABLE.
-
-        </Text>
+        <View style={styles.listRow}>
+          <Text style={styles.listLabel}>a)</Text>
+          <Text style={styles.listContent}>
+            TRASPASO O SUBARRIENDO:, “LA ARRENDATARIA” NO PODRÁ SUBARRENDAR LA TOTALIDAD O PARTE DE “EL INMUEBLE”, NI TRASPASAR O GRAVAR EN FORMA ALGUNA SUS DERECHOS Y
+            OBLIGACIONES DERIVADAS DEL PRESENTE CONTRATO, A MENOS QUE OBTENGA EL CONSENTIMIENTO EXPRESO Y POR ESCRITO DE “EL ARRENDADOR”. “EL ARRENDADOR” EN CUALQUIER
+            MOMENTO PODRÁ TRASPASAR, PASAR, CEDER, AFECTAR, APORTAR, TRANSMITIR O DE CUALQUIER FORMA ENAJENAR LOS DERECHOS DERIVADOS DEL PRESENTE CONTRATO Y LOS DERECHOS DE
+            COBRO DE LOS MISMOS, INCLUYENDO SUS ACCESORIOS TALES COMO HIPOTECA, FIANZA, PRENDA O CUALQUIER Página 5 de 9 OTRO PRIVILEGIO CON EL QUE, EN SU CASO, SE CUENTE,
+            YA SEA DE MANERA PARCIAL O TOTAL, ASÍ COMO ENAJENAR, HIPOTECAR, AFECTAR, APORTAR, TRANSMITIR O GRAVAR DE CUALQUIER FORMA “EL INMUEBLE”. LO ANTERIOR, SIEMPRE Y
+            CUANDO NO AFECTE LOS DERECHOS DE “LA ARRENDATARIA” AL AMPARO DEL PRESENTE CONTRATO Y DE CONFORMIDAD CON LA LEGISLACIÓN APLICABLE.
+          </Text>
+        </View>
+        
         {/* Clausala 9 */}
         <Text style={styles.p}>
           <Text style={styles.bold}>NOVENA. </Text>— USO DEL INMUEBLE El inmueble arrendado tiene la característica de ("DEPARTAMENTO HABITACIONAL") ( LOCAL COMERCIAL) y
@@ -319,12 +321,15 @@ export default function ContractDocument({ contract, landlord, tenant, property 
           cubrir la pena convencional señalada en la CLAUSULA DECIMA CUARTA por el incumplimiento "EL ARRENDADOR nace la entrega de "EL INMUEBLE" a "EL ARRENDATARIO", mismo que
           se encuentra en perfecta condición, estado y totalmente funcional obligándose "EL ARRENDATARIO" a lo señalado en la CLAUSULA DECIMA PRIMERA respecto del cuidado del inmueble.
         </Text>
-        <Text style={styles.listend}>
-          a)	INSPECCIONES Y VISITAS: “LA ARRENDATARIA”, conviene en permitir que “EL ARRENDADOR” o sus representantes entren a “EL INMUEBLE” si así lo requieren conveniente,
-          con fines de inspeccionar las condiciones del mismo o para hacer las adiciones, mejoras, cambios o alteraciones que estimen convenientes en “EL INMUEBLE”. dichos
-          representantes deberán estar plenamente identificados por “EL ARRENDADOR”, a través de comunicado enviado a “LA ARRENDATARIA” CON POR LO MENOS 5 DÍAS NATURALES DE ANTICIPACIÓN
-          PARA SU CONOCIMIENTO.
-        </Text>
+        <View style={styles.listRow}>
+          <Text style={styles.listLabel}>a)</Text>
+          <Text style={styles.listContent}>
+            INSPECCIONES Y VISITAS: “LA ARRENDATARIA”, conviene en permitir que “EL ARRENDADOR” o sus representantes entren a “EL INMUEBLE” si así lo requieren conveniente,
+            con fines de inspeccionar las condiciones del mismo o para hacer las adiciones, mejoras, cambios o alteraciones que estimen convenientes en “EL INMUEBLE”. dichos
+            representantes deberán estar plenamente identificados por “EL ARRENDADOR”, a través de comunicado enviado a “LA ARRENDATARIA” CON POR LO MENOS 5 DÍAS NATURALES DE ANTICIPACIÓN
+            PARA SU CONOCIMIENTO.
+          </Text>
+        </View>
         {/* Clausala 10 */}
         <Text style={styles.p}>
           <Text style={styles.bold}>DECIMA. </Text>— SERVICIOS DEL INMUEBLE "EL ARRENDATARIO recibe el inmueble sin adeuda alguno de servicias de electricidad, agua y demás servicios

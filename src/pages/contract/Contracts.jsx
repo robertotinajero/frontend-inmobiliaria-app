@@ -1,12 +1,14 @@
 // src/pages/Contracts.jsx
 import { useEffect, useState } from "react";
-import ContractModal from "./ContractModal";
+import ContractModal from "./modal/ContractModal";
 import apiFetch from "../../utils/apiFetch";
 import { fmtDate } from "../../utils/dates";
-import { FaFilePdf, FaPen, FaTrash } from "react-icons/fa"; // usa los que necesites
+import { fmtNumber, fmtMoney } from "../../utils/format";
+import { FaFilePdf, FaPen, FaTrash } from "react-icons/fa";
 
 import { buildContractPdf } from "../../utils/contractPdf";
 import { buildContractPdfReact } from "./buildContractPdfReact";
+import { buildMonthlyPayments } from "../../utils/payments";
 
 export default function Contracts() {
   const [contracts, setContracts] = useState([]);
@@ -20,9 +22,35 @@ export default function Contracts() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedContract, setSelectedContract] = useState(null);
 
+  const [balances, setBalances] = useState({});          // { [id_contract]: number }
+  const [loadingBalances, setLoadingBalances] = useState(false);
+
   /**
    * Cargar contratos desde el backend
    */
+
+  const fetchBalances = async (list) => {
+    try {
+      setLoadingBalances(true);
+      const entries = await Promise.all(
+        list.map(async (c) => {
+          try {
+            const res = await apiFetch(`/api/payments/contract/${c.id_contract}`);
+            const arr = Array.isArray(res) ? res : (res.items || []);
+            const outstanding = computeOutstanding(arr);
+            return [c.id_contract, outstanding];
+          } catch {
+            return [c.id_contract, 0];
+          }
+        })
+      );
+      setBalances(Object.fromEntries(entries));
+    } finally {
+      setLoadingBalances(false);
+    }
+  };
+
+
   const fetchContracts = async () => {
     try {
       setLoading(true);
@@ -34,11 +62,16 @@ export default function Contracts() {
       // GET con búsqueda y paginación (backend ya lo soporta)
       //const data = await apiFetch('/api/contracts/');
       const data = await apiFetch(`/api/contracts?${params.toString()}`);
-
+      const list = data.items ? data.items : data;
       // Si el backend devuelve paginación
-      if (data.items) {
-        setContracts(data.items);
+      if (list) {
+        setContracts(list);
         setTotalPages(data.totalPages);
+        if (Array.isArray(list) && list.length) {
+          fetchBalances(list);
+        } else {
+          setBalances({});
+        }
       } else {
         // Si devuelve un array sin paginación
         setContracts(data);
@@ -104,6 +137,8 @@ export default function Contracts() {
         body: JSON.stringify(contractPayload),
       });
 
+
+
       setIsModalOpen(false);
       fetchContracts();
     } catch (error) {
@@ -126,53 +161,80 @@ export default function Contracts() {
     }
   };
 
+  async function uploadReceipt(id_payment, file) {
+    const fd = new FormData();
+    fd.append("file", file, file.name);
+    await apiFetch(`/api/payments/${id_payment}/receipts`, {
+      method: "POST",
+      body: fd,
+    });
+  }
+
   /**
    * Descargar contrato
    */
 
   const handleContractPdf = async (row) => {
+    try {
+      setDownloadingId(row.id_contract);
+
+      // Asegura que tienes los IDs necesarios; si la fila no los trae, pide el detalle.
+      const base = row.id_landlord ? row : await apiFetch(`/api/contracts/${row.id_contract}`);
+
+      const [landlord, tenant, property] = await Promise.all([
+        apiFetch(`/api/landlords/${base.id_landlord}`),
+        apiFetch(`/api/tenants/${base.id_tenant}`),
+        apiFetch(`/api/properties/${base.id_property}`),
+      ]);
+
+      const pdfBlob = await buildContractPdfReact({
+        contract: {
+          folio: base.folio,
+          dt_start: base.dt_start,
+          dt_end: base.dt_end,
+          monthly_rent: base.monthly_rent,
+          security_deposit: base.security_deposit,
+          payment_day: base.payment_day,
+          penalty: base.penalty,
+          status: base.status,
+          id_landlord: base.id_landlord,
+          id_tenant: base.id_tenant,
+          id_property: base.id_property,
+          notes: base.notes,
+        },
+        landlord, tenant, property,
+      });
+
+      //const filename = `Contrato_${base.folio || base.id_contract}.pdf`;
+      const filename = `Contrato de arrendamiento ${base.folio}.pdf`;
+      const url = URL.createObjectURL(pdfBlob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("No se pudo generar el PDF del contrato", err);
+    } finally {
+      setDownloadingId(null);
+    }
+  };
+
+  const computeOutstanding = (paymentsArr) =>
+    paymentsArr.reduce((sum, p) => {
+      const due = Number(p.amount_due ?? 0);
+      const paid = Number(p.amount_paid ?? 0);
+      return sum + Math.max(due - paid, 0);
+    }, 0);
+
+  const handlePaymentSaved = async (id_contract) => {
   try {
-    setDownloadingId(row.id_contract);
-
-    // Asegura que tienes los IDs necesarios; si la fila no los trae, pide el detalle.
-    const base = row.id_landlord ? row : await apiFetch(`/api/contracts/${row.id_contract}`);
-
-    const [landlord, tenant, property] = await Promise.all([
-      apiFetch(`/api/landlords/${base.id_landlord}`),
-      apiFetch(`/api/tenants/${base.id_tenant}`),
-      apiFetch(`/api/properties/${base.id_property}`),
-    ]);
-
-    const pdfBlob = await buildContractPdfReact({
-      contract: {
-        folio: base.folio,
-        dt_start: base.dt_start,
-        dt_end: base.dt_end,
-        monthly_rent: base.monthly_rent,
-        security_deposit: base.security_deposit,
-        payment_day: base.payment_day,
-        penalty: base.penalty,
-        status: base.status,
-        id_landlord: base.id_landlord,
-        id_tenant: base.id_tenant,
-        id_property: base.id_property,
-        notes: base.notes,
-      },
-      landlord, tenant, property,
-    });
-
-    //const filename = `Contrato_${base.folio || base.id_contract}.pdf`;
-    const filename = `Contrato de arrendamiento ${base.folio}.pdf`;
-    const url = URL.createObjectURL(pdfBlob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = filename;
-    a.click();
-    URL.revokeObjectURL(url);
-  } catch (err) {
-    console.error("No se pudo generar el PDF del contrato", err);
-  } finally {
-    setDownloadingId(null);
+    const res = await apiFetch(`/api/payments/contract/${id_contract}`);
+    const arr = Array.isArray(res) ? res : (res.items || []);
+    const outstanding = computeOutstanding(arr);
+    setBalances((prev) => ({ ...prev, [id_contract]: outstanding }));
+  } catch (e) {
+    console.error("Error refrescando saldo:", e);
   }
 };
 
@@ -212,19 +274,20 @@ export default function Contracts() {
               <th className="px-4 py-3">Fecha inicio</th>
               <th className="px-4 py-3">Fecha de termino</th>
               <th className="px-4 py-3">Estado</th>
+              <th className="px-4 py-3">Saldo</th>
               <th className="px-4 py-3 text-right">Acciones</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="7" className="text-center py-6 text-gray-500">
+                <td colSpan="9" className="text-center py-6 text-gray-500">
                   Cargando contratos...
                 </td>
               </tr>
             ) : contracts.length === 0 ? (
               <tr>
-                <td colSpan="7" className="text-center py-6 text-gray-500">
+                <td colSpan="9" className="text-center py-6 text-gray-500">
                   No se encontraron contratos
                 </td>
               </tr>
@@ -238,6 +301,9 @@ export default function Contracts() {
                   <td className="px-4 py-3">{fmtDate(contract.dt_start)}</td>
                   <td className="px-4 py-3">{fmtDate(contract.dt_end)}</td>
                   <td className="px-4 py-3">{contract.status}</td>
+                  <td className="px-4 py-3">
+                    {loadingBalances ? "…" : fmtMoney(balances[contract.id_contract] ?? 0)}
+                  </td>
                   <td className="px-4 py-3 text-right space-x-2">
                     {/* Contrato (PDF) */}
                     <button
@@ -300,7 +366,9 @@ export default function Contracts() {
           title={selectedContract ? "Editar contrato" : "Nuevo contrato"}
           onClose={() => setIsModalOpen(false)}
           onSave={handleSave}
+          onPaymentSaved={handlePaymentSaved}
           contract={selectedContract}
+          show={open}
         />
       )}
     </div>
