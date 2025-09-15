@@ -140,7 +140,6 @@ export default function ContractModal({ title, onClose, onSave, onPaymentSaved, 
 
 
   useEffect(() => {
-
     fetchData();
   }, []);
 
@@ -164,10 +163,6 @@ export default function ContractModal({ title, onClose, onSave, onPaymentSaved, 
       fetchPayments(contract.id_contract);
     }
   }, [contract]);
-
-  useEffect(() => {
-    console.log('payments state updated:', payments);
-  }, [payments]);
 
   // Guardar
   const handleSubmit = async (e) => {
@@ -255,10 +250,10 @@ export default function ContractModal({ title, onClose, onSave, onPaymentSaved, 
       fd.append("file", file, file.name);
 
       // POST: espera que tu API regrese { url, filename } (ajusta si es distinto)
-      // const res = await apiFetch(`/api/payments/${id_payment}/receipts`, {
-      //   method: "POST",
-      //   body: fd,
-      // });
+      const res = await apiFetch(`/api/payments/receipts/${id_payment}`, {
+        method: "PUT",
+        body: fd,
+      });
 
       // Trata de obtener la URL/filename devuelta por el backend
       const url =

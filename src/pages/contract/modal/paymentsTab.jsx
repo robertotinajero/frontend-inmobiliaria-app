@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FaPaperclip, FaCloudUploadAlt, FaSave, FaTimes, FaSpinner, FaCheck, FaEye, FaEdit } from "react-icons/fa";
 import { fmtDate, fmtMoney } from "../../../utils/format";
+import PaymentReceiptUpload from "./PaymentReceiptUpload";
 
 export default function PaymentsTab({
     contract,
@@ -101,49 +102,18 @@ export default function PaymentsTab({
 
                                     {/* Comprobante */}
                                     <td className="px-4 py-3">
-                                        <div className="flex items-center gap-3">
-                                            {p.receipt_url ? (
-                                                <a
-                                                    href={p.receipt_url}
-                                                    target="_blank"
-                                                    rel="noreferrer"
-                                                    className="text-blue-600 hover:underline inline-flex items-center gap-1"
-                                                    title={p.receipt_name || p.receipt_url}
-                                                >
-                                                    <FaEye />
-                                                    <span className="truncate max-w-[180px]">
-                                                        {p.receipt_name || (String(p.receipt_url).split("/").pop() || "Ver")}
-                                                    </span>
-                                                </a>
-                                            ) : p.receipt_name ? (
-                                                <span
-                                                    className="text-gray-700 inline-flex items-center gap-2 truncate max-w-[220px]"
-                                                    title={p.receipt_name}
-                                                >
-                                                    <FaPaperclip />
-                                                    <span className="truncate">{p.receipt_name}</span>
-                                                    {isUploading && <FaSpinner className="animate-spin text-gray-400" />}
-                                                </span>
-                                            ) : (
-                                                <span className="text-gray-400 text-sm">Sin archivo</span>
-                                            )}
-
-                                            <label className="inline-flex items-center gap-2 text-blue-600 hover:underline cursor-pointer">
-                                                <FaCloudUploadAlt />
-                                                <span>Adjuntar</span>
-                                                <input
-                                                    type="file"
-                                                    hidden
-                                                    accept="image/*,application/pdf"
-                                                    onChange={(e) => {
-                                                        const file = e.target.files?.[0];
-                                                        if (file) onUploadReceipt(p.id_payment, file);
-                                                        e.target.value = "";
-                                                    }}
-                                                />
-                                            </label>
-                                        </div>
+                                        <PaymentReceiptUpload
+                                            idPayment={p.id_payment}
+                                            onUpload={onUploadReceipt}
+                                            accept="image/*,application/pdf"
+                                            maxSizeKB={10 * 1024} // 10 MB
+                                            existingUrl={p.receipt_url}
+                                            existingName={p.receipt_name}
+                                            uploading={uploadingReceiptId === p.id_payment || p.__uploadingReceipt}
+                                            disabled={savingPaymentId === p.id_payment}
+                                        />
                                     </td>
+
 
                                     {/* Acciones */}
                                     <td className="px-4 py-3 text-right whitespace-nowrap">
