@@ -58,14 +58,14 @@ export default function Navbar({ user, onToggleSidebar, onLogout }) {
       {/* Derecha: Iconos y usuario */}
       <div className="flex items-center gap-6 relative">
         {/* Notificaciones */}
-        <div className="relative">
+        {/* <div className="relative">
           <FaEnvelope className="text-gray-600 w-5 h-5 hover:text-blue-600" />
           <span className="absolute -top-2 -right-2 bg-purple-500 text-white text-xs rounded-full px-1">4</span>
         </div>
         <div className="relative">
           <FaBell className="text-gray-600 w-5 h-5 hover:text-blue-600" />
           <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1">3</span>
-        </div>
+        </div> */}
 
         {/* Botón Dark/Light mode */}
         <button

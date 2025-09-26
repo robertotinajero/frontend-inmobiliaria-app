@@ -64,7 +64,7 @@ export const AuthProvider = ({ children }) => {
       setUser(null);
     }
     scheduleLogout(token);
-    navigate("/dashboard", { replace: true });
+    navigate("/contracts", { replace: true });
   };
 
   

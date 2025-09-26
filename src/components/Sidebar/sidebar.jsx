@@ -33,7 +33,7 @@ export default function Sidebar({ collapsed }) {
 
         {/* Menú */}
         <nav className="mt-4 flex flex-col gap-2 p-2">
-          <NavLink
+          {/* <NavLink
             to="/dashboard"
             className={({ isActive }) =>
               `flex items-center gap-3 px-4 py-2 rounded-md transition-all 
@@ -46,7 +46,7 @@ export default function Sidebar({ collapsed }) {
           >
             <FaHome size={18} />
             {!collapsed && <span>Dashboard</span>}
-          </NavLink>
+          </NavLink> */}
 
           <NavLink
             to="/quotes"

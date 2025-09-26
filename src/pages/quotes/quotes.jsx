@@ -55,7 +55,7 @@ export default function Quotes() {
 
                         <div class="mt-6 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                             <div class="sm:col-span-2">
-                                <label for="quote-price" class="block text-sm/6 font-medium text-gray-900">Prestamo</label>
+                                <label for="quote-price" class="block text-sm/6 font-medium text-gray-900">Compra</label>
                                 <div class="mt-2">
                                     <input
                                         id="quote-price"

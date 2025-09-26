@@ -20,7 +20,7 @@ export default function AppRoutes() {
         <Route path="/login" element={<Login />} />
 
         {/* Privadas con layout independiente */}
-        <Route
+        {/* <Route
           path="/dashboard"
           element={
             <PrivateRoute>
@@ -29,7 +29,7 @@ export default function AppRoutes() {
               </Layout>
             </PrivateRoute>
           }
-        />
+        /> */}
         <Route
           path="/quotes"
           element={

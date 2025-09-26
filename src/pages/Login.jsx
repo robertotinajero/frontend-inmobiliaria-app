@@ -79,7 +79,7 @@ const Login = () => {
 
       // Si el login es exitoso (status 200), navega
       if (response.status === 200 || response.status === 201) {
-        navigate('/dashboard');
+        navigate('/contracts');
       }
     } catch (error) {
       setToastMessage('Credenciales incorrectas');

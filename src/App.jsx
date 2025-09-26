@@ -24,7 +24,7 @@ export default function App() {
       {/* Rutas privadas con Layout */}
       <Route element={<PrivateRoute />}>
         <Route element={<Layout />}>
-          <Route path="/dashboard" element={<Dashboard />} />
+          {/* <Route path="/dashboard" element={<Dashboard />} /> */}
           <Route path="/contracts" element={<Contracts />} />
           <Route path="/properties" element={<Properties />} />
           <Route path="/tenants" element={<Tenants />} />
