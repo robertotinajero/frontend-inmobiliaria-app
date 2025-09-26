@@ -5,6 +5,7 @@ import {
   FaEnvelope,
   FaCog,
   FaMoon,
+  FaSun,
   FaUser,
   FaSignOutAlt,
   FaLock,
@@ -15,6 +16,9 @@ import "./navbar.css";
 
 export default function Navbar({ user, onToggleSidebar, onLogout }) {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(
+    () => localStorage.getItem("theme") === "dark"
+  );
   const dropdownRef = useRef(null);
 
   useEffect(() => {
@@ -28,9 +32,20 @@ export default function Navbar({ user, onToggleSidebar, onLogout }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Activa/desactiva clase dark
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [darkMode]);
+
   return (
-    <nav className="bg-navbar-blue text-white border-b px-6 py-3 flex justify-between items-center shadow-sm">
-      {/* Izquierda: Menú y título */}
+    <nav className="bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-100 border-b px-6 py-3 flex justify-between items-center shadow-sm transition-all duration-300">
+      {/* Izquierda: botón sidebar */}
       <div className="flex items-center gap-4">
         <button
           onClick={onToggleSidebar}
@@ -52,9 +67,17 @@ export default function Navbar({ user, onToggleSidebar, onLogout }) {
           <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1">3</span>
         </div>
 
-        {/* Configuración y modo oscuro */}
-        <FaCog className="text-gray-600 w-5 h-5 hover:text-blue-600 cursor-pointer" />
-        <FaMoon className="text-gray-600 w-5 h-5 hover:text-blue-600 cursor-pointer" />
+        {/* Botón Dark/Light mode */}
+        <button
+          onClick={() => setDarkMode(!darkMode)}
+          className="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
+        >
+          {darkMode ? (
+            <FaSun className="text-yellow-400 w-5 h-5" />
+          ) : (
+            <FaMoon className="text-gray-600 dark:text-gray-300 w-5 h-5" />
+          )}
+        </button>
 
         {/* Usuario */}
         <div className="relative" ref={dropdownRef}>
@@ -74,23 +97,28 @@ export default function Navbar({ user, onToggleSidebar, onLogout }) {
         </button>
 
         {/* Submenú */}
-        {userMenuOpen && (
-          <div className="absolute right-0 mt-2 w-52 bg-white border rounded shadow z-50 py-2 text-sm">
-            <p className="px-4 py-2 text-gray-500">Welcome!</p>
-            <Link to="/account" className="px-4 py-2 text-gray-500 hover:bg-gray-100 flex items-center gap-2"
-              onClick={() => userMenuOpen(false)}>
-              <FaUser />Account
-            </Link>
-            <Link to="/settings" className="px-4 py-2 text-gray-500 hover:bg-gray-100 flex items-center gap-2">
-                <FaCog /> Settings
+          {userMenuOpen && (
+            <div className="absolute right-0 mt-2 w-52 bg-white border rounded shadow z-50 py-2 text-sm">
+              <p className="px-4 py-2 text-gray-500">Bienvenido</p>
+              <Link
+                to="/account"
+                className="px-4 py-2 text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+              >
+                <FaUser /> Mi cuenta
               </Link>
-            <button
-              onClick={onLogout}
-              className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 text-red-600"
-            >
-              <FaSignOutAlt /> Cerrar sesión
-            </button>
-          </div>
+              <Link
+                to="/settings"
+                className="px-4 py-2 text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+              >
+                <FaCog /> Configuración
+              </Link>
+              <button
+                onClick={onLogout}
+                className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 text-red-600"
+              >
+                <FaSignOutAlt /> Cerrar sesión
+              </button>
+            </div>
         )}
       </div>
       </div>

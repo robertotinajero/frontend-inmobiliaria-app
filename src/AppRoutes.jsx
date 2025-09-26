@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Layout from "../src/components/Layout/Layout";
 import Dashboard from "./pages/Dashboard";
+import Quotes from "./pages/quotes/quotes";
 import Contracts from "./pages/contract/Contracts";
 import Properties from "./pages/property/Properties";
 import Tenants from "./pages/tenant/Tenants";
@@ -25,6 +26,16 @@ export default function AppRoutes() {
             <PrivateRoute>
               <Layout>
                 <Dashboard />
+              </Layout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/quotes"
+          element={
+            <PrivateRoute>
+              <Layout>
+                <Quotes />
               </Layout>
             </PrivateRoute>
           }

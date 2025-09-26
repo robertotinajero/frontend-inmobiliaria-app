@@ -1,24 +1,33 @@
 // src/components/layout/Sidebar.jsx
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { FaHome, FaFileContract, FaBuilding, FaUsers } from "react-icons/fa";
+import {
+  FaHome,
+  FaChartBar,
+  FaBell,
+  FaFileContract,
+  FaBuilding,
+  FaUsers,
+  FaFileInvoiceDollar,
+  FaCog,
+} from "react-icons/fa";
 import "../../assets/css/Sidebar.css";
 
 export default function Sidebar({ collapsed }) {
   return (
     <>
       {/* Sidebar contenedor */}
-      <div
-        className={`h-screen bg-navbar-blue text-white fixed top-0 left-0 transition-all duration-300 ${
-          collapsed ? "w-16" : "w-64"
-        }`}
+
+      <div className={`h-screen fixed top-0 left-0 transition-all duration-300
+          ${collapsed ? "w-20" : "w-64"} bg-green-800 dark:bg-gray-800 text-white dark:text-gray-100 border-r border-gray-200 dark:border-gray-700`}
       >
         {/* Logo */}
-        <div className="flex items-center justify-between p-4">
+        <div className="flex items-center justify-center p-4 border-b border-gray-200">
           <img
-            src="/img/logo/logo2.png"
+            src="/img/logo/logo1.png"
             alt="Grupo Peña"
-            className="h-16 object-contain"
+            className={`object-contain transition-all ${collapsed ? "h-10" : "h-14"
+              }`}
           />
         </div>
 
@@ -27,8 +36,11 @@ export default function Sidebar({ collapsed }) {
           <NavLink
             to="/dashboard"
             className={({ isActive }) =>
-              `flex items-center gap-3 px-4 py-2 rounded-md transition-colors ${
-                isActive ? "bg-[#1D2D69]" : "hover:bg-[#1D2D69]"
+              `flex items-center gap-3 px-4 py-2 rounded-md transition-all 
+              ${isActive
+                ? "bg-green-700 dark:bg-gray-200 text-gray-200 font-semibold dark:text-gray-800"
+                : "hover:bg-green-700 hover:text-white dark:hover:bg-gray-400 dark:hover:text-gray-800 text-gray-200 dark:text-gray-300"
+              }
               }`
             }
           >
@@ -37,10 +49,28 @@ export default function Sidebar({ collapsed }) {
           </NavLink>
 
           <NavLink
+            to="/quotes"
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-4 py-2 rounded-md transition-all 
+              ${isActive
+                ? "bg-green-700 dark:bg-gray-200 text-gray-200 font-semibold dark:text-gray-800"
+                : "hover:bg-green-700 hover:text-white dark:hover:bg-gray-400 dark:hover:text-gray-800 text-gray-200 dark:text-gray-300"
+              }
+              }`
+            }
+          >
+            <FaFileInvoiceDollar size={18} />
+            {!collapsed && <span>Cotizaciones</span>}
+          </NavLink>
+
+          <NavLink
             to="/contracts"
             className={({ isActive }) =>
-              `flex items-center gap-3 px-4 py-2 rounded-md ${
-                isActive ? "bg-[#1D2D69]" : "hover:bg-[#1D2D69]"
+              `flex items-center gap-3 px-4 py-2 rounded-md transition-all 
+              ${isActive
+                ? "bg-green-700 dark:bg-gray-200 text-gray-200 font-semibold dark:text-gray-800"
+                : "hover:bg-green-700 hover:text-white dark:hover:bg-gray-400 dark:hover:text-gray-800 text-gray-200 dark:text-gray-300"
+              }
               }`
             }
           >
@@ -51,8 +81,11 @@ export default function Sidebar({ collapsed }) {
           <NavLink
             to="/properties"
             className={({ isActive }) =>
-              `flex items-center gap-3 px-4 py-2 rounded-md ${
-                isActive ? "bg-[#1D2D69]" : "hover:bg-[#1D2D69]"
+              `flex items-center gap-3 px-4 py-2 rounded-md transition-all 
+              ${isActive
+                ? "bg-green-700 dark:bg-gray-200 text-gray-200 font-semibold dark:text-gray-800"
+                : "hover:bg-green-700 hover:text-white dark:hover:bg-gray-400 dark:hover:text-gray-800 text-gray-200 dark:text-gray-300"
+              }
               }`
             }
           >
@@ -63,8 +96,11 @@ export default function Sidebar({ collapsed }) {
           <NavLink
             to="/tenants"
             className={({ isActive }) =>
-              `flex items-center gap-3 px-4 py-2 rounded-md ${
-                isActive ? "bg-[#1D2D69]" : "hover:bg-[#1D2D69]"
+              `flex items-center gap-3 px-4 py-2 rounded-md transition-all 
+              ${isActive
+                ? "bg-green-700 dark:bg-gray-200 text-gray-200 font-semibold dark:text-gray-800"
+                : "hover:bg-green-700 hover:text-white dark:hover:bg-gray-400 dark:hover:text-gray-800 text-gray-200 dark:text-gray-300"
+              }
               }`
             }
           >
@@ -75,8 +111,11 @@ export default function Sidebar({ collapsed }) {
           <NavLink
             to="/landlords"
             className={({ isActive }) =>
-              `flex items-center gap-3 px-4 py-2 rounded-md ${
-                isActive ? "bg-[#1D2D69]" : "hover:bg-[#1D2D69]"
+              `flex items-center gap-3 px-4 py-2 rounded-md transition-all 
+              ${isActive
+                ? "bg-green-700 dark:bg-gray-200 text-gray-200 font-semibold dark:text-gray-800"
+                : "hover:bg-green-700 hover:text-white dark:hover:bg-gray-400 dark:hover:text-gray-800 text-gray-200 dark:text-gray-300"
+              }
               }`
             }
           >
@@ -86,8 +125,11 @@ export default function Sidebar({ collapsed }) {
           <NavLink
             to="/users"
             className={({ isActive }) =>
-              `flex items-center gap-3 px-4 py-2 rounded-md ${
-                isActive ? "bg-[#1D2D69]" : "hover:bg-[#1D2D69]"
+              `flex items-center gap-3 px-4 py-2 rounded-md transition-all 
+              ${isActive
+                ? "bg-green-700 dark:bg-gray-200 text-gray-200 font-semibold dark:text-gray-800"
+                : "hover:bg-green-700 hover:text-white dark:hover:bg-gray-400 dark:hover:text-gray-800 text-gray-200 dark:text-gray-300"
+              }
               }`
             }
           >
@@ -97,7 +139,7 @@ export default function Sidebar({ collapsed }) {
         </nav>
       </div>
 
-      
+
     </>
   );
 }

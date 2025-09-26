@@ -12,6 +12,7 @@ import Tenants from "./pages/tenant/Tenants";
 import Landlords from "./pages/landlord/Landlords";
 import Users from "./pages/users/Users";
 import AccountPage from "./pages/account/AccountPage"
+import Quotes from "./pages/quotes/quotes";
 
 export default function App() {
   return (
@@ -30,6 +31,7 @@ export default function App() {
           <Route path="/landlords" element={<Landlords />} />
           <Route path="/users" element={<Users />} />
           <Route path="/account" element={<AccountPage />} />
+          <Route path="/quotes" element={<Quotes />} />
         </Route>
       </Route>
 
