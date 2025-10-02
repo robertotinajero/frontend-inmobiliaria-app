@@ -4,8 +4,7 @@
 
 /* Fondo y superposición */
 .login-background {
-  @apply relative min-h-screen bg-cover bg-center flex items-center justify-center;
-  background-image: url('/assets/img/build2.jpg');
+  transition: background-image 1s ease-in-out;
 }
 
 .login-overlay {
@@ -30,10 +29,28 @@
 }
 
 .login-spinner {
-  @apply animate-spin h-5 w-5 text-white;
+  @apply h-5 w-5 text-blue-500;
+  animation: spin 5s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 .label-white {
   @apply text-white font-medium;
   color: white !important;
+}
+
+.card-login {
+  @apply relative z-10 bg-gray-200/30 backdrop-blur-lg p-8 rounded-3xl shadow-xl w-[380px];
+  
+  /* Neumorphism profundo */
+  border-radius: 30px; /* opcional si quieres más redondeo que Tailwind */
+  box-shadow: 
+    8px 8px 16px #c1c3c5,     /* sombra externa oscura */
+    -8px -8px 16px #c1c3c5,   /* sombra externa clara */
+    inset 4px 4px 8px #d1d9e6, /* sombra interna oscura */
+    inset -4px -4px 8px #ffffff; /* sombra interna clara */
 }

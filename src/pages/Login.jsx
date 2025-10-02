@@ -1,19 +1,33 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+
+// Material ui
+import Button from '@mui/material/Button';
+import { LoginButton } from "../ui/buttons/LoginButton.styles";
+
+import { IoArrowUp } from 'react-icons/io5';
 
 import { IoEye, IoEyeOff } from 'react-icons/io5';
 import { PiSignInBold } from 'react-icons/pi';
 import { Snackbar, Alert } from '@mui/material';
 import { Card, CardContent } from '@/components/Card/card';
 import { Input } from '@/components/Input/input';
-import { Button } from '@/components/Button/button';
+//import { Button } from '@/components/Button/button';
 import { Label } from '@/components/Label/label';
 import { motion } from 'framer-motion';
 import { ShieldCheck } from 'lucide-react';
 import '../assets/css/login.css';
 import logo from '../assets/img/logo/logo1.png';
+
+const backgroundImages = [
+  '/assets/img/build1.jpg',
+  '/assets/img/build2.jpg',
+  '/assets/img/build3.jpg',
+  '/assets/img/build4.jpg',
+  '/assets/img/build5.jpg',
+];
 
 const Login = () => {
   const API_URL = import.meta.env.VITE_API_URL;
@@ -27,6 +41,19 @@ const Login = () => {
   const [toastMessage, setToastMessage] = useState('');
   const [toastSeverity, setToastSeverity] = useState('');
   const [loading, setLoading] = useState(false);
+  const [bgImage, setBgImage] = useState(backgroundImages[0]);
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setBgImage((prev) => {
+        const currentIndex = backgroundImages.indexOf(prev);
+        const nextIndex = (currentIndex + 1) % backgroundImages.length;
+        return backgroundImages[nextIndex];
+      });
+    }, 10000); // 10000 ms = 10 segundos
+
+    return () => clearInterval(interval); // limpiar intervalo al desmontar
+  }, []);
 
 
   const handleLogin = (e) => {
@@ -68,8 +95,8 @@ const Login = () => {
     try {
       const response = await axios.post(`${API_URL}/api/auth/login`, body);
       console.log(response);
-      
-      const { access_token } = response.data;  
+
+      const { access_token } = response.data;
 
       // Guardar token en localStorage
       localStorage.setItem('token', access_token);
@@ -111,7 +138,11 @@ const Login = () => {
   // };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-okip-100 relative overflow-hidden login-background">
+    
+    <div
+      className="login-background relative min-h-screen bg-cover bg-center flex items-center justify-center"
+      style={{ backgroundImage: `url(${bgImage})` }}
+    >
 
       {/* Fondo decorativo */}
       <div className="absolute inset-0 z-0 login-background bg-cover bg-center opacity-20" />
@@ -123,14 +154,14 @@ const Login = () => {
           className="w-full max-w-md"
         >
           {/* Card de login */}
-          <Card className="relative z-10 bg-white/30 backdrop-blur-lg p-8 rounded-3xl shadow-xl w-[350px]">
+          <Card className="card-login">
 
             {/* Logo de la empresa */}
             <div className="flex justify-center mb-4">
               <img src={logo} alt="Logo empresa" className="h-16 object-contain" />
             </div>
 
-            <h2 className="text-okip-500 text-2xl font-bold text-center mb-6">Login</h2>
+            <h2 className="text-okip-700 text-l  text-center mb-6">Bienvenido a tu panel de administración</h2>
 
             <form onSubmit={handleLogin}>
               <div className="mb-4">
@@ -142,7 +173,7 @@ const Login = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   autoComplete="username"
-                  placeholder="usuario@dominio.com"
+                  placeholder="Correo electrónico"
                   className="w-full mt-1 px-4 py-2 rounded-lg border border-okip-200 bg-white/50 focus:outline-none focus:ring-2 focus:ring-okip-500"
                 />
               </div>
@@ -155,6 +186,7 @@ const Login = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  placeholder="********"
                   autoComplete="current-password"
                   className="w-full mt-1 px-4 py-2 rounded-lg border border-okip-200 bg-white/50 focus:outline-none focus:ring-2 focus:ring-okip-500"
                 />
@@ -169,46 +201,45 @@ const Login = () => {
 
 
 
-              <div className="flex justify-end text-sm text-okip-400 mb-6">
-                <a href="#" className="hover:underline">¿Olvidaste tu contraseña?</a>
+              <div className="flex justify-end text-sm text-blue-700 mb-6">
+                <a href="#" className="hover:text-blue-900">¿Olvidaste tu contraseña?</a>
               </div>
 
-              <Button
-                type="submit"
-                disabled={loading}
-                className="login-button"
-              //className="w-full bg-okip-500 hover:bg-okip-505 text-white font-semibold py-2 rounded-full transition duration-300"
-              >
-                {loading ? (
+              <div className="flex justify-center mt-4">
+
+                <Button type="submit" variant="outlined" disabled={loading} className='w-40'>
+                  { loading ? (
                   <span className="login-loading">
-                    <svg
-                      className="login-spinner"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
+                    <svg className="login-spinner" viewBox="0 0 50 50">
                       <circle
                         className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
+                        cx="25"
+                        cy="25"
+                        r="20"
                         stroke="currentColor"
-                        strokeWidth="4"
+                        strokeWidth="5"
+                        fill="none"
                       />
-                      <path
+                      <circle
                         className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4z"
+                        cx="25"
+                        cy="25"
+                        r="20"
+                        stroke="currentColor"
+                        strokeWidth="5"
+                        strokeDasharray="31.4 31.4"
+                        strokeLinecap="round"
+                        fill="none"
                       />
                     </svg>
-                    Ingresando...
                   </span>
-                ) : (
-                  <>
-                    Ingresar <PiSignInBold className="login-button-icon" />
-                  </>
-                )}
-              </Button>
+                  ) : (
+                    <>
+                      Iniciar sesión
+                    </>
+                  )}
+                </Button>
+              </div>
             </form>
 
             {/* Redes sociales (opcional) */}

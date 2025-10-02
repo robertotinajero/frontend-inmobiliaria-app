@@ -5,6 +5,10 @@ import Login from "./pages/Login";
 import PrivateRoute from "./auth/PrivateRoute";
 import Layout from "./components/Layout/Layout";
 
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import theme from './theme/theme';
+
 import Dashboard from "./pages/Dashboard";
 import Contracts from "./pages/contract/Contracts";
 import Properties from "./pages/property/Properties";
@@ -16,27 +20,30 @@ import Quotes from "./pages/quotes/quotes";
 
 export default function App() {
   return (
-    <Routes>
-      {/* Ruta raíz */}
-      <Route path="/" element={<Navigate to="/login" replace />} />
-      <Route path="/login" element={<Login />} />
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Routes>
+        {/* Ruta raíz */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/login" element={<Login />} />
 
-      {/* Rutas privadas con Layout */}
-      <Route element={<PrivateRoute />}>
-        <Route element={<Layout />}>
-          {/* <Route path="/dashboard" element={<Dashboard />} /> */}
-          <Route path="/contracts" element={<Contracts />} />
-          <Route path="/properties" element={<Properties />} />
-          <Route path="/tenants" element={<Tenants />} />
-          <Route path="/landlords" element={<Landlords />} />
-          <Route path="/users" element={<Users />} />
-          <Route path="/account" element={<AccountPage />} />
-          <Route path="/quotes" element={<Quotes />} />
+        {/* Rutas privadas con Layout */}
+        <Route element={<PrivateRoute />}>
+          <Route element={<Layout />}>
+            {/* <Route path="/dashboard" element={<Dashboard />} /> */}
+            <Route path="/contracts" element={<Contracts />} />
+            <Route path="/properties" element={<Properties />} />
+            <Route path="/tenants" element={<Tenants />} />
+            <Route path="/landlords" element={<Landlords />} />
+            <Route path="/users" element={<Users />} />
+            <Route path="/account" element={<AccountPage />} />
+            <Route path="/quotes" element={<Quotes />} />
+          </Route>
         </Route>
-      </Route>
 
-      {/* Fallback */}
-      <Route path="*" element={<Navigate to="/login" replace />} />
-    </Routes>
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
+    </ThemeProvider>
   );
 }
