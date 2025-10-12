@@ -94,6 +94,22 @@ export default function Sidebar({ collapsed }) {
           </NavLink>
 
           <NavLink
+            to="/units"
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-4 py-2 rounded-md transition-all 
+              ${isActive
+                ? "bg-green-700 dark:bg-gray-200 text-gray-200 font-semibold dark:text-gray-800"
+                : "hover:bg-green-700 hover:text-white dark:hover:bg-gray-400 dark:hover:text-gray-800 text-gray-200 dark:text-gray-300"
+              }
+              }`
+            }
+          >
+            <FaBuilding size={18} />
+            {!collapsed && <span>Unidades</span>}
+          </NavLink>
+
+
+          <NavLink
             to="/tenants"
             className={({ isActive }) =>
               `flex items-center gap-3 px-4 py-2 rounded-md transition-all 

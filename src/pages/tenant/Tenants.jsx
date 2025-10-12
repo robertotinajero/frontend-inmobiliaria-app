@@ -51,13 +51,15 @@ export default function Tenants() {
         // Actualizar
         await apiFetch(`/api/tenants/${selectedTenant.id_tenant}`, {
           method: "PUT",
-          body: JSON.stringify(tenantData),
+          body: tenantData, // <-- FormData directo
+          headers: {}, // No poner Content-Type, lo maneja fetch automáticamente
         });
       } else {
         // Crear
         await apiFetch(`/api/tenants`, {
           method: "POST",
-          body: JSON.stringify(tenantData),
+          body: tenantData, // <-- FormData directo
+          headers: {}, // No poner Content-Type
         });
       }
       setIsModalOpen(false);
@@ -86,6 +88,8 @@ export default function Tenants() {
       {/* Buscador */}
       <div className="mb-4">
         <input
+          id="search-tenants"
+          name="search-tenants"
           type="text"
           placeholder="Buscar por nombre o email..."
           value={search}

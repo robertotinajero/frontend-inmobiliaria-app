@@ -368,7 +368,6 @@ export default function Contracts() {
           onSave={handleSave}
           onPaymentSaved={handlePaymentSaved}
           contract={selectedContract}
-          show={open}
         />
       )}
     </div>

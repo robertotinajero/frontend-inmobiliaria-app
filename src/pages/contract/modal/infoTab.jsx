@@ -13,11 +13,11 @@ export default function InfoTab(props) {
     status, setStatus,
     idLandlord, setIdLandlord,
     idTenant, setIdTenant,
-    idProperty, setIdProperty,
+    idUnit, setIdUnit,
     guarantorName, setGuarantorName,
     guarantorContact, setGuarantorContact,
     notes, setNotes,
-    landlords = [], tenants = [], properties = []
+    landlords = [], tenants = [], units = []
   } = props;
 
   return (
@@ -27,17 +27,21 @@ export default function InfoTab(props) {
       </div>
 
       <div className="flex flex-col gap-4 text-sm col-span-1">
-        <TextField label="Día de pago (1-31)" variant="outlined" type="number" value={paymentDay} onChange={(e)=>setPaymentDay(e.target.value)} required fullWidth/>
-      </div>
-
-      <div className="flex flex-col gap-4 text-sm col-span-1">
-        <TextField select label="Propiedad" variant="outlined" value={properties.length ? idProperty : ""} onChange={(e)=>setIdProperty(e.target.value)} required fullWidth>
+        <TextField select label="Propiedad" variant="outlined" value={units.length ? idUnit : ""} onChange={(e)=>setIdUnit(e.target.value)} required fullWidth>
           <MenuItem value="">Selecciona la propiedad</MenuItem>
-          {properties.map((p)=>(
-            <MenuItem key={p.id_property} value={String(p.id_property)}>{p.nm_property} - {p.address}</MenuItem>
+          {units.map((p)=>(
+            <MenuItem key={p.id_unit} value={String(p.id_unit)}>{p.type} - {p.nm_unit}</MenuItem>
           ))}
         </TextField>
       </div>
+
+      <div className="flex flex-col gap-4 text-sm col-span-1">
+        <TextField label="Fecha inicio" type="date" value={dtStart} onChange={(e)=>setDtStart(e.target.value)} required fullWidth InputLabelProps={{shrink:true}}/>
+      </div>
+
+      {/* <div className="flex flex-col gap-4 text-sm col-span-1">
+        <TextField label="Día de pago" variant="outlined" value={paymentDay} onChange={(e)=>setPaymentDay(e.target.value)} required fullWidth/>
+      </div> */}
 
       <div className="flex flex-col gap-4 text-sm col-span-1">
         <TextField select label="Arrendador" variant="outlined" value={landlords.length ? idLandlord : ""} onChange={(e)=>setIdLandlord(e.target.value)} required fullWidth>
@@ -48,7 +52,11 @@ export default function InfoTab(props) {
         </TextField>
       </div>
 
-      <div className="flex flex-col gap-4 text-sm col-span-2">
+      <div className="flex flex-col gap-4 text-sm col-span-1">
+        <TextField label="Fecha fin" variant="outlined" type="date" value={dtEnd} onChange={(e)=>setDtEnd(e.target.value)} fullWidth InputLabelProps={{shrink:true}}/>
+      </div>
+
+      <div className="flex flex-col gap-4 text-sm col-span-1">
         <TextField select label="Arrendatario" variant="outlined" value={tenants.length ? idTenant : ""} onChange={(e)=>setIdTenant(e.target.value)} required fullWidth>
           <MenuItem value="">Selecciona el arrendatario</MenuItem>
           {tenants.map((t)=>(
@@ -58,21 +66,14 @@ export default function InfoTab(props) {
       </div>
 
       <div className="flex flex-col gap-4 text-sm col-span-1">
-        <TextField label="Fecha inicio" type="date" value={dtStart} onChange={(e)=>setDtStart(e.target.value)} required fullWidth InputLabelProps={{shrink:true}}/>
+        <TextField label="Renta mensual" variant="outlined" type="number" value={monthlyRent} onChange={(e)=>setMonthlyRent(e.target.value)} required fullWidth/>
       </div>
       <div className="flex flex-col gap-4 text-sm col-span-1">
-        <TextField label="Fecha fin" type="date" value={dtEnd} onChange={(e)=>setDtEnd(e.target.value)} fullWidth InputLabelProps={{shrink:true}}/>
-      </div>
-
-      <div className="flex flex-col gap-4 text-sm col-span-1">
-        <TextField label="Renta mensual" type="number" value={monthlyRent} onChange={(e)=>setMonthlyRent(e.target.value)} required fullWidth/>
-      </div>
-      <div className="flex flex-col gap-4 text-sm col-span-1">
-        <TextField label="Depósito en garantía" type="number" value={securityDeposit} onChange={(e)=>setSecurityDeposit(e.target.value)} required fullWidth/>
+        <TextField label="Depósito en garantía" variant="outlined" type="number" value={securityDeposit} onChange={(e)=>setSecurityDeposit(e.target.value)} required fullWidth/>
       </div>
 
       <div className="flex flex-col gap-4 text-sm col-span-1">
-        <TextField label="Penalización" type="number" value={penalty} onChange={(e)=>setPenalty(e.target.value)} fullWidth/>
+        <TextField label="Penalización" variant="outlined" value={penalty} onChange={(e)=>setPenalty(e.target.value)} fullWidth/>
       </div>
       <div className="flex flex-col gap-4 text-sm col-span-1">
         <TextField select label="Estado" value={status} onChange={(e)=>setStatus(e.target.value)} fullWidth>
@@ -83,12 +84,12 @@ export default function InfoTab(props) {
         </TextField>
       </div>
 
-      <div className="flex flex-col gap-4 text-sm col-span-1">
+      {/* <div className="flex flex-col gap-4 text-sm col-span-1">
         <TextField label="Nombre del aval" value={guarantorName} onChange={(e)=>setGuarantorName(e.target.value)} fullWidth/>
       </div>
       <div className="flex flex-col gap-4 text-sm col-span-1">
         <TextField label="Contacto del aval" value={guarantorContact} onChange={(e)=>setGuarantorContact(e.target.value)} fullWidth/>
-      </div>
+      </div> */}
 
       <div className="flex flex-col gap-4 text-sm col-span-2">
         <TextField label="Notas" placeholder="Notas" multiline rows={3} value={notes} onChange={(e)=>setNotes(e.target.value)} fullWidth/>

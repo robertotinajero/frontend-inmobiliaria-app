@@ -17,6 +17,9 @@ import Landlords from "./pages/landlord/Landlords";
 import Users from "./pages/users/Users";
 import AccountPage from "./pages/account/AccountPage"
 import Quotes from "./pages/quotes/quotes";
+import Units from "./pages/units/units";
+import SubUnits from "./pages/units/SubUnits";
+
 
 export default function App() {
   return (
@@ -32,6 +35,8 @@ export default function App() {
           <Route element={<Layout />}>
             {/* <Route path="/dashboard" element={<Dashboard />} /> */}
             <Route path="/contracts" element={<Contracts />} />
+            <Route path="/units" element={<Units />} />
+            <Route path="/units/:id" element={<SubUnits />} />
             <Route path="/properties" element={<Properties />} />
             <Route path="/tenants" element={<Tenants />} />
             <Route path="/landlords" element={<Landlords />} />

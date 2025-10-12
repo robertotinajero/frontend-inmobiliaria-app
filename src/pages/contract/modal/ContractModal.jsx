@@ -2,7 +2,7 @@
 import { useState, useEffect, useMemo, useRef, lazy, Suspense, useCallback } from "react";
 import apiFetch from "../../../utils/apiFetch";
 import { motion, AnimatePresence } from "framer-motion";
-import { Tabs, Tab, TextField, MenuItem } from "@mui/material";
+import { Dialog, Tabs, Tab, TextField, MenuItem, Button, Grid } from "@mui/material";
 import { buildContractPdf } from "../../../utils/contractPdf";
 import { toDateInput } from "../../../utils/dates";
 import { fmtDate } from "../../../utils/dates";
@@ -29,7 +29,7 @@ export default function ContractModal({ title, onClose, onSave, onPaymentSaved, 
   // Relaciones (FK)
   const [idLandlord, setIdLandlord] = useState("");
   const [idTenant, setIdTenant] = useState("");
-  const [idProperty, setIdProperty] = useState("");
+  const [idUnit, setIdUnit] = useState("");
 
   // Extras
   const [guarantorName, setGuarantorName] = useState("");
@@ -39,7 +39,7 @@ export default function ContractModal({ title, onClose, onSave, onPaymentSaved, 
   // Datos para los selects dinámicos
   const [landlords, setLandlords] = useState([]);
   const [tenants, setTenants] = useState([]);
-  const [properties, setProperties] = useState([]);
+  const [units, setUnits] = useState([]);
 
   // Archivos
   const [files, setFiles] = useState([]); // File[]
@@ -58,6 +58,17 @@ export default function ContractModal({ title, onClose, onSave, onPaymentSaved, 
   const [loadingPayments, setLoadingPayments] = useState(false);
   const [savingPaymentId, setSavingPaymentId] = useState(null);
   const [uploadingReceiptId, setUploadingReceiptId] = useState(null);
+
+  const fetchNextFolio = async () => {
+    const res = await apiFetch('/api/contracts/last-folio');
+    const lastFolio = res.folio; // ejemplo: "CT-2025-0007"
+
+    const next = parseInt(lastFolio.split('-').pop()) + 1;
+    const year = new Date().getFullYear();
+    const newFolio = `CT-${year}-${String(next).padStart(4, '0')}`;
+
+    setForm((prev) => ({ ...prev, folio: newFolio }));
+  };
 
   // Helpers
   const isPreviewable = (file) =>
@@ -115,14 +126,14 @@ export default function ContractModal({ title, onClose, onSave, onPaymentSaved, 
 
   const fetchData = async () => {
     try {
-      const [landlordsData, tenantsData, propertiesData] = await Promise.all([
+      const [landlordsData, tenantsData, unitsData] = await Promise.all([
         apiFetch("/api/landlords/"),
         apiFetch("/api/tenants/"),
-        apiFetch("/api/properties/"),
+        apiFetch("/api/units/subunits"),
       ]);
       setLandlords(landlordsData);
       setTenants(tenantsData);
-      setProperties(propertiesData);
+      setUnits(unitsData);
     } catch (error) {
       console.error("Error cargando datos para selects:", error);
     }
@@ -143,6 +154,30 @@ export default function ContractModal({ title, onClose, onSave, onPaymentSaved, 
     fetchData();
   }, []);
 
+  // Generar folio automáticamente si es nuevo contrato
+  useEffect(() => {
+    const generateFolio = async () => {
+      try {
+        const res = await apiFetch("/api/contracts/last-folio");
+        console.log("Last folio response:", res);
+        if (res?.folio) {
+          setFolio(res.folio);
+        } else {
+          const year = new Date().getFullYear();
+          setFolio(`CT-${year}-0001`);
+        }
+      } catch (err) {
+        console.error("Error generando folio:", err);
+        const year = new Date().getFullYear();
+        setFolio(`CT-${year}-TEMP`);
+      }
+    };
+
+    if (!contract) {
+      generateFolio();
+    }
+  }, [contract]);
+
   // Si estamos editando un contrato, cargar sus datos
   useEffect(() => {
     if (contract) {
@@ -156,7 +191,7 @@ export default function ContractModal({ title, onClose, onSave, onPaymentSaved, 
       setStatus(contract.status || "Activo");
       setIdLandlord(contract.id_landlord || "");
       setIdTenant(contract.id_tenant || "");
-      setIdProperty(contract.id_property || "");
+      setIdUnit(contract.id_property || "");
       setGuarantorName(contract.guarantor_name || "");
       setGuarantorContact(contract.guarantor_contact || "");
       setNotes(contract.notes || "");
@@ -182,7 +217,7 @@ export default function ContractModal({ title, onClose, onSave, onPaymentSaved, 
         status,
         id_landlord: idLandlord,
         id_tenant: idTenant,
-        id_property: idProperty,
+        id_property: idUnit,
         guarantor_name: guarantorName,
         guarantor_contact: guarantorContact,
         notes,
@@ -380,11 +415,11 @@ export default function ContractModal({ title, onClose, onSave, onPaymentSaved, 
                       status, setStatus,
                       idLandlord, setIdLandlord,
                       idTenant, setIdTenant,
-                      idProperty, setIdProperty,
+                      idUnit, setIdUnit,
                       guarantorName, setGuarantorName,
                       guarantorContact, setGuarantorContact,
                       notes, setNotes,
-                      landlords, tenants, properties
+                      landlords, tenants, units
                     }}
                   />
                 )}
