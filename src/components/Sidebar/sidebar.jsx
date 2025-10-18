@@ -78,7 +78,7 @@ export default function Sidebar({ collapsed }) {
             {!collapsed && <span>Contratos</span>}
           </NavLink>
 
-          <NavLink
+          {/* <NavLink
             to="/properties"
             className={({ isActive }) =>
               `flex items-center gap-3 px-4 py-2 rounded-md transition-all 
@@ -91,7 +91,7 @@ export default function Sidebar({ collapsed }) {
           >
             <FaBuilding size={18} />
             {!collapsed && <span>Propiedades</span>}
-          </NavLink>
+          </NavLink> */}
 
           <NavLink
             to="/units"

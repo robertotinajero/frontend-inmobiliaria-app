@@ -4,6 +4,7 @@ import { TextField, MenuItem } from "@mui/material";
 export default function InfoTab(props) {
   const {
     folio, setFolio,
+    contractType, setContractType,
     dtStart, setDtStart,
     dtEnd, setDtEnd,
     monthlyRent, setMonthlyRent,
@@ -24,6 +25,13 @@ export default function InfoTab(props) {
     <div className="grid grid-cols-2 gap-4 mt-1">
       <div className="flex flex-col gap-4 text-sm col-span-1">
         <TextField label="Folio" variant="outlined" value={folio} onChange={(e)=>setFolio(e.target.value)} required fullWidth/>
+      </div>
+
+      <div className="flex flex-col gap-4 text-sm col-span-1">
+        <TextField select label="Tipo de contrato" value={contractType} onChange={(e)=>setContractType(e.target.value)} fullWidth>
+          <MenuItem value="Alquiler">Alquiler</MenuItem>
+          <MenuItem value="Venta">Venta</MenuItem>
+        </TextField>
       </div>
 
       <div className="flex flex-col gap-4 text-sm col-span-1">

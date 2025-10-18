@@ -18,6 +18,7 @@ export default function ContractModal({ title, onClose, onSave, onPaymentSaved, 
 
   // Campos de contrato
   const [folio, setFolio] = useState("");
+  const [contractType, setContractType] = useState("");
   const [dtStart, setDtStart] = useState("");
   const [dtEnd, setDtEnd] = useState("");
   const [monthlyRent, setMonthlyRent] = useState("");
@@ -129,7 +130,7 @@ export default function ContractModal({ title, onClose, onSave, onPaymentSaved, 
       const [landlordsData, tenantsData, unitsData] = await Promise.all([
         apiFetch("/api/landlords/"),
         apiFetch("/api/tenants/"),
-        apiFetch("/api/units/subunits"),
+        apiFetch("/api/units/"),
       ]);
       setLandlords(landlordsData);
       setTenants(tenantsData);
@@ -182,6 +183,7 @@ export default function ContractModal({ title, onClose, onSave, onPaymentSaved, 
   useEffect(() => {
     if (contract) {
       setFolio(contract.folio || "");
+      setContractType(contract.contract_type || "");
       setDtStart(toDateInput(contract.dt_start) || "");
       setDtEnd(toDateInput(contract.dt_end) || "");
       setMonthlyRent(contract.monthly_rent || "");
@@ -208,6 +210,7 @@ export default function ContractModal({ title, onClose, onSave, onPaymentSaved, 
       // Entrego todo al caller. Ahí decides si posteas JSON, luego subes files con FormData, etc.
       onSave?.({
         folio,
+        contractType,
         dt_start: dtStart,
         dt_end: dtEnd,
         monthly_rent: monthlyRent,
@@ -406,6 +409,7 @@ export default function ContractModal({ title, onClose, onSave, onPaymentSaved, 
                   <InfoTab
                     {...{
                       folio, setFolio,
+                      contractType, setContractType,
                       dtStart, setDtStart,
                       dtEnd, setDtEnd,
                       monthlyRent, setMonthlyRent,

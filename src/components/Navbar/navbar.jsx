@@ -49,7 +49,7 @@ export default function Navbar({ user, onToggleSidebar, onLogout }) {
       <div className="flex items-center gap-4">
         <button
           onClick={onToggleSidebar}
-          className="text-white hover:text-white-800"
+          className={`duration-400 dark:bg-gray-800 text-gray-700 dark:text-white  border-gray-200 `}
         >
           ☰
         </button>

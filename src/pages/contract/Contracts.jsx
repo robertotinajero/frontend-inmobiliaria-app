@@ -16,6 +16,7 @@ export default function Contracts() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [limit, setLimit] = useState(10);
   const [downloadingId, setDownloadingId] = useState(null);
 
   // Modal
@@ -55,12 +56,9 @@ export default function Contracts() {
     try {
       setLoading(true);
       const params = new URLSearchParams();
-      if (search) {
-        params.set("search", search); // o 'q' según tu API
-      }
+      if (search) params.set("search", search);
       params.set("page", String(page));
-      // GET con búsqueda y paginación (backend ya lo soporta)
-      //const data = await apiFetch('/api/contracts/');
+      params.set("limit", String(limit)); // 👈 nuevo
       const data = await apiFetch(`/api/contracts?${params.toString()}`);
       const list = data.items ? data.items : data;
       // Si el backend devuelve paginación
@@ -86,7 +84,7 @@ export default function Contracts() {
 
   useEffect(() => {
     fetchContracts();
-  }, [page, search]);
+  }, [page, search, limit]);
 
   /**
    * Nuevo contrato
@@ -112,6 +110,7 @@ export default function Contracts() {
       // Normaliza tipos
       const contractPayload = {
         folio: payloadFromModal.folio,
+        contract_type: payloadFromModal.contractType,
         dt_start: payloadFromModal.dt_start,
         dt_end: payloadFromModal.dt_end || null,
         monthly_rent: Number(payloadFromModal.monthly_rent),
@@ -228,31 +227,28 @@ export default function Contracts() {
     }, 0);
 
   const handlePaymentSaved = async (id_contract) => {
-  try {
-    const res = await apiFetch(`/api/payments/contract/${id_contract}`);
-    const arr = Array.isArray(res) ? res : (res.items || []);
-    const outstanding = computeOutstanding(arr);
-    setBalances((prev) => ({ ...prev, [id_contract]: outstanding }));
-  } catch (e) {
-    console.error("Error refrescando saldo:", e);
-  }
-};
+    try {
+      const res = await apiFetch(`/api/payments/contract/${id_contract}`);
+      const arr = Array.isArray(res) ? res : (res.items || []);
+      const outstanding = computeOutstanding(arr);
+      setBalances((prev) => ({ ...prev, [id_contract]: outstanding }));
+    } catch (e) {
+      console.error("Error refrescando saldo:", e);
+    }
+  };
 
   return (
     <div>
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-2 px-4">
         <h1 className="text-2xl font-bold text-gray-800">Contratos</h1>
-        <button
-          onClick={handleCreate}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow"
-        >
+        <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow" onClick={handleCreate} >
           + Nuevo contrato
         </button>
       </div>
 
       {/* Buscador */}
-      <div className="mb-4">
+      <div className="mb-4 px-4">
         <input
           type="text"
           placeholder="Buscar contrato, arrendador o arrendatario..."
@@ -263,11 +259,12 @@ export default function Contracts() {
       </div>
 
       {/* Tabla */}
-      <div className="bg-white rounded-xl shadow overflow-x-auto">
-        <table className="w-full text-sm text-left text-gray-700">
-          <thead className="bg-gray-100 text-gray-800 text-sm uppercase">
+      <div className="bg-gray-100 overflow-x-auto px-4">
+        <table className="w-full rounded-xl text-sm text-left text-gray-700 bg-white ">
+          <thead className="rounded-xl bg-gray-300 text-gray-800 text-sm uppercase">
             <tr>
               <th className="px-4 py-3">Folio</th>
+              <th className="px-4 py-3">Tipo de contrato</th>
               <th className="px-4 py-3">Propiedad</th>
               <th className="px-4 py-3">Arrendador</th>
               <th className="px-4 py-3">Arrendatario</th>
@@ -281,20 +278,21 @@ export default function Contracts() {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="9" className="text-center py-6 text-gray-500">
+                <td colSpan="10" className="text-center py-6 text-gray-500">
                   Cargando contratos...
                 </td>
               </tr>
             ) : contracts.length === 0 ? (
               <tr>
-                <td colSpan="9" className="text-center py-6 text-gray-500">
+                <td colSpan="10" className="text-center py-6 text-gray-500">
                   No se encontraron contratos
                 </td>
               </tr>
             ) : (
               contracts.map((contract) => (
-                <tr key={contract.id_contract} className="border-b hover:bg-gray-50">
-                  <td className="px-4 py-3">{contract.folio}</td>
+                <tr key={contract.id_contract} className="border-b hover:bg-gray-100">
+                  <td className="px-3 py-3">{contract.folio}</td>
+                  <td className="px-4 py-3">{contract.contract_type}</td>
                   <td className="px-4 py-3">{contract.property_name}</td>
                   <td className="px-4 py-3">{contract.landlord_name}</td>
                   <td className="px-4 py-3">{contract.tenant_name}</td>
@@ -340,24 +338,45 @@ export default function Contracts() {
       </div>
 
       {/* Paginación */}
-      <div className="flex justify-end mt-4 space-x-2">
-        <button
-          disabled={page === 1}
-          onClick={() => setPage((prev) => prev - 1)}
-          className="px-3 py-1 border rounded disabled:opacity-50"
-        >
-          Anterior
-        </button>
-        <span className="px-2 py-1">
-          {page} de {totalPages}
-        </span>
-        <button
-          disabled={page === totalPages}
-          onClick={() => setPage((prev) => prev + 1)}
-          className="px-3 py-1 border rounded disabled:opacity-50"
-        >
-          Siguiente
-        </button>
+      {/* Paginación y cantidad */}
+      <div className="flex justify-between items-center mt-4 px-4">
+        <div className="flex items-center gap-2 text-sm text-gray-700">
+          <span>Mostrar:</span>
+          <select
+            value={limit}
+            onChange={(e) => {
+              setLimit(Number(e.target.value));
+              setPage(1); // 👈 reinicia la paginación al cambiar el límite
+            }}
+            className="border border-gray-300 rounded-md px-2 py-1"
+          >
+            <option value={5}>5</option>
+            <option value={10}>10</option>
+            <option value={25}>25</option>
+            <option value={50}>50</option>
+          </select>
+          <span>por página</span>
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <button
+            disabled={page === 1}
+            onClick={() => setPage((prev) => prev - 1)}
+            className="px-3 py-1 border rounded disabled:opacity-50"
+          >
+            Anterior
+          </button>
+          <span className="px-2 py-1 text-sm">
+            Página {page} de {totalPages}
+          </span>
+          <button
+            disabled={page === totalPages}
+            onClick={() => setPage((prev) => prev + 1)}
+            className="px-3 py-1 border rounded disabled:opacity-50"
+          >
+            Siguiente
+          </button>
+        </div>
       </div>
 
       {/* Modal */}
